@@ -16,10 +16,43 @@
 
 package uk.gov.hmrc.performance.simulation
 
+import io.gatling.core.config.GatlingConfiguration
 import uk.gov.hmrc.play.test.UnitSpec
 
 class ConfigurationDrivenSimulationsSpec extends UnitSpec {
 
-  // TODO, find out how to test ConfigurationDrivenSimulations
+  import io.gatling.core.Predef._
+  import io.gatling.http.Predef._
 
+  GatlingConfiguration.setUpForTest()
+
+  class TestSimulation extends ConfigurationDrivenSimulations {
+
+    val foo = http("Get Foo").get(s"/foo")
+    val bar = http("Get Bar").get(s"/bar")
+
+    journeyPart("some-id-1", "Some Description 1")(
+      foo, bar
+    )
+
+    journeyPart("some-id-2", "Some Description 2")(
+      bar, foo
+    )
+  }
+
+  "The simulation" should {
+    "create some parts" in {
+
+      val simulation: TestSimulation = new TestSimulation()
+
+      simulation.parts.size shouldBe 2
+
+      simulation.parts.head.id shouldBe "some-id-1"
+      simulation.parts.head.description shouldBe "Some Description 1"
+
+      simulation.parts(1).id shouldBe "some-id-2"
+      simulation.parts(1).description shouldBe "Some Description 2"
+
+    }
+  }
 }
