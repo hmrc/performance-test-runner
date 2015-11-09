@@ -20,6 +20,8 @@ import io.gatling.core.Predef._
 import io.gatling.core.structure.{PopulatedScenarioBuilder, ScenarioBuilder}
 import uk.gov.hmrc.performance.conf.{HttpConfiguration, JourneyConfiguration, TestRateConfiguration}
 
+import scala.util.Random
+
 
 trait ConfigurationDrivenSimulations extends Simulation
 with HttpConfiguration
@@ -51,9 +53,12 @@ with TestRateConfiguration {
 
         lazy val users = csv(conf.feeder).circular
 
+        private val RNG = new Random
+        
         override lazy val builder: ScenarioBuilder = scenario(conf.description)
           .feed(users)
           .feed(Iterator.continually(Map("currentTime" -> System.currentTimeMillis().toString)))
+          .feed(Iterator.continually(Map("random" -> Math.abs(RNG.nextInt()))))
           .exitBlockOnFail(exec(chain))
 
         override lazy val load: Double = conf.load
