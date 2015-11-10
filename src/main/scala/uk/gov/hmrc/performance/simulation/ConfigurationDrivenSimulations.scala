@@ -39,7 +39,7 @@ with TestRateConfiguration {
 
   private def journeys: Seq[Journey] = {
 
-    println(s"Implemented journey parts: ${parts.mkString(", ")}")
+    println(s"Implemented journey parts: ${parts.map(_.id).mkString(", ")}")
 
     definitions.map(conf => {
 
@@ -92,20 +92,21 @@ with TestRateConfiguration {
     scenario.builder.inject(injectionSteps)
   })
 
-  def runSimulation() = {
-    setUp(withInjectedLoad(journeys): _*)
-      .protocols(httpProtocol)
-      .assertions(global.failedRequests.percent.is(0))
+  def runSimulation(): Unit = {
+    if(runSingleUserJourney) {
+      val injectedBuilders = journeys.map(scenario => {
+        scenario.builder.inject(atOnceUsers(1))
+      })
+
+      setUp(injectedBuilders: _*)
+        .protocols(httpProtocol)
+        .assertions(global.failedRequests.count.is(0))
+    } else {
+      setUp(withInjectedLoad(journeys): _*)
+        .protocols(httpProtocol)
+        .assertions(global.failedRequests.percent.lessThan(0))
+    }
   }
 
-  def runSimulationWithOneUser() = {
-    val injectedBuilders = journeys.map(scenario => {
-      scenario.builder.inject(atOnceUsers(1))
-    })
-
-    setUp(injectedBuilders: _*)
-      .protocols(httpProtocol)
-      .assertions(global.failedRequests.count.is(0))
-  }
-
+  runSimulation()
 }

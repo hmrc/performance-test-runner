@@ -35,8 +35,8 @@ case class JourneyPart(id: String, description: String) {
   val rb = scala.collection.mutable.MutableList[HttpRequestBuilder]()
 
   def builder: ChainBuilder =
-    if (rb.isEmpty) throw new scala.IllegalArgumentException(s"Journey '$id' must have at least one request")
+    if (rb.isEmpty) throw new scala.IllegalArgumentException(s"'$id' must have at least one request")
     else rb.tail.foldLeft(exec(rb.head))((ex, trb) => ex.exec(trb))
 
-  def withRequests(requests: HttpRequestBuilder*): Unit = rb ++ requests
+  def withRequests(requests: HttpRequestBuilder*): Unit = rb ++= requests
 }

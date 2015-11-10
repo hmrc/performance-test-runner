@@ -33,8 +33,20 @@ class ConfigurationDrivenSimulationsSpec extends UnitSpec {
 
     setup("some-id-1", "Some Description 1") withRequests (foo, bar)
 
-    setup("some-id-2", "Some Description 2") withRequests (bar, foo)
+    setup("some-id-2", "Some Description 2") withRequests bar
+
+    override def runSimulation(): Unit = {}
   }
+
+
+  class MalformedTestSimulation extends ConfigurationDrivenSimulations {
+
+    setup("some-id-1", "Some Description 1")
+
+    override def runSimulation(): Unit = {}
+  }
+
+
 
   "The simulation" should {
     "create some parts" in {
@@ -45,10 +57,19 @@ class ConfigurationDrivenSimulationsSpec extends UnitSpec {
 
       simulation.parts.head.id shouldBe "some-id-1"
       simulation.parts.head.description shouldBe "Some Description 1"
+      simulation.parts.head.builder.actionBuilders.size shouldBe 2
 
       simulation.parts(1).id shouldBe "some-id-2"
       simulation.parts(1).description shouldBe "Some Description 2"
+      simulation.parts(1).builder.actionBuilders.size shouldBe 1
 
+    }
+
+    "Throw an exception if the journey part has no requests" in {
+      val thrown = intercept[IllegalArgumentException] {
+        new MalformedTestSimulation().parts.head.builder
+      }
+      thrown.getMessage shouldBe "'some-id-1' must have at least one request"
     }
   }
 }

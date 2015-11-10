@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.performance.conf
 
+import scala.util.Try
+
 trait TestRateConfiguration extends Configuration {
   val noLoad = 0.0001D
 
@@ -25,5 +27,6 @@ trait TestRateConfiguration extends Configuration {
   lazy val rampDownTime: FiniteDuration = readProperty("perftest.rampdown_time").toInt minutes
   lazy val constantRateTime: FiniteDuration = readProperty("perftest.constant_rate_time").toInt minutes
   lazy val loadPercentage: Double = readProperty("perftest.load_percentage").toDouble / 100D
+  lazy val runSingleUserJourney: Boolean = Try(readProperty("perftest.single_journey").toBoolean).getOrElse(false)
 
 }
