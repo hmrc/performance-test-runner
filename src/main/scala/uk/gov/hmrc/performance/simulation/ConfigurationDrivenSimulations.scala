@@ -17,8 +17,7 @@
 package uk.gov.hmrc.performance.simulation
 
 import io.gatling.core.Predef._
-import io.gatling.core.structure.{ChainBuilder, PopulatedScenarioBuilder, ScenarioBuilder}
-import io.gatling.http.request.builder.HttpRequestBuilder
+import io.gatling.core.structure.{PopulatedScenarioBuilder, ScenarioBuilder}
 import uk.gov.hmrc.performance.conf.{HttpConfiguration, JourneyConfiguration, TestRateConfiguration}
 
 import scala.util.Random
@@ -31,17 +30,11 @@ with TestRateConfiguration {
 
   private[simulation] val parts = scala.collection.mutable.MutableList[JourneyPart]()
 
-  def journeyPart(journeyId: String, journeyDescription: String)(rb: HttpRequestBuilder*): Unit = {
+  def setup(id: String, description: String): JourneyPart = {
 
-    val journeyPart: JourneyPart = new JourneyPart {
-      override def builder: ChainBuilder =
-        if (rb.isEmpty) throw new scala.IllegalArgumentException(s"Journey '$id' must have at least one request")
-        else rb.tail.foldLeft(exec(rb.head))((ex, trb) => ex.exec(trb))
-
-      override val description: String = journeyDescription
-      override val id: String = journeyId
-    }
-    parts += journeyPart
+    val part: JourneyPart = new JourneyPart(id, description)
+    parts += part
+    part
   }
 
   private def journeys: Seq[Journey] = {
