@@ -107,6 +107,4 @@ with TestRateConfiguration {
         .assertions(global.failedRequests.percent.lessThan(0))
     }
   }
-
-  runSimulation()
 }

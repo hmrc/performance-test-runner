@@ -35,7 +35,6 @@ class ConfigurationDrivenSimulationsSpec extends UnitSpec {
 
     setup("some-id-2", "Some Description 2") withRequests bar
 
-    override def runSimulation(): Unit = {}
   }
 
 
@@ -43,7 +42,6 @@ class ConfigurationDrivenSimulationsSpec extends UnitSpec {
 
     setup("some-id-1", "Some Description 1")
 
-    override def runSimulation(): Unit = {}
   }
 
 
