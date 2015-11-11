@@ -73,7 +73,7 @@ class HelloWorldSimulation extends ConfigurationDrivenSimulations {
 
 ##### Step 3. Configure the journeys. 
 
-```json
+```
 journeys {
 
   hello-world = {
@@ -101,7 +101,7 @@ bob,12345678
 To run the performance test execute
 
 ```
-sbt test it:test 
+sbt test
 ```
 
 ### More about the journey configuration.
