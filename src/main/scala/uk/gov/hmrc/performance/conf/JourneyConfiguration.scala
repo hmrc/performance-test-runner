@@ -18,9 +18,23 @@ package uk.gov.hmrc.performance.conf
 
 trait JourneyConfiguration extends Configuration {
 
+  val allJourneys = keys("journeys")
+
+  val journeysToRun = {
+    val values = readPropertyList("perftest.journeys_to_run")
+    if (values.isEmpty) allJourneys
+    else {
+      values.foreach((id: String) => checkJourneyName(id))
+      values
+    }
+  }
+
+  def checkJourneyName(id: String): Any = {
+    if (!allJourneys.contains(id)) throw new RuntimeException("Name of the journey couldn't be found in journeys.conf file")
+  }
 
   def definitions: Seq[JourneyDefinition] = {
-    keys("journeys").map(id => {
+    journeysToRun.map(id => {
       val description = readProperty(s"journeys.$id.description")
       val load = readProperty(s"journeys.$id.load").toDouble
       val parts = readPropertyList(s"journeys.$id.parts")
@@ -28,7 +42,6 @@ trait JourneyConfiguration extends Configuration {
       JourneyDefinition(id, description, load, parts, feeder)
     })
   }
-
 }
 
 case class JourneyDefinition(id: String, description: String, load: Double, parts: List[String], feeder: String)

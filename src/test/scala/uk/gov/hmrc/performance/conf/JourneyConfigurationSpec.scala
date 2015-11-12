@@ -34,15 +34,29 @@ class JourneyConfigurationSpec extends UnitSpec with JourneyConfiguration {
 
   "JourneyConfiguration" should {
     "be able to read a well formed journey.conf file" in {
-      definitions shouldBe List(
+      definitions should contain(JourneyDefinition(
+        id = "hello-world-1",
+        description = "Hello world journey 1",
+        load = 9.1,
+        parts = List("login", "helloworld-home"),
+        feeder = "data/helloworld.csv"
+      ))
+    }
+    "be able to return only journeys set in the application.config file" in {
+      definitions should contain theSameElementsAs Seq(JourneyDefinition(
+        id = "hello-world-1",
+        description = "Hello world journey 1",
+        load = 9.1,
+        parts = List("login", "helloworld-home"),
+        feeder = "data/helloworld.csv"
+      ),
         JourneyDefinition(
-          id = "hello-world",
-          description = "Hello world journey",
-          load = 9.1,
-          parts = List("login", "helloworld-home"),
+          id = "hello-world-3",
+          description = "Hello world journey 3",
+          load = 3.3,
+          parts = List("helloworld-home"),
           feeder = "data/helloworld.csv"
-        )
-      )
+        ))
     }
   }
 

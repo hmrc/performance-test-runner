@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.performance.conf
 
-import com.typesafe.config.{Config, ConfigFactory, ConfigMergeable}
+import com.typesafe.config.{Config, ConfigFactory}
 
 import scala.util.Properties
 
@@ -27,23 +27,12 @@ trait Configuration {
 
   private val defaultConfig = ConfigFactory.systemProperties().withFallback(ConfigFactory.load())
 
-  private val localConfig: ConfigMergeable =
-    try {
-      ConfigFactory.load("services-local")
-    } catch {
-      case _: Exception => throw new RuntimeException("Couldn't load services-local.conf. Please check the configuration file")
-    }
-
-  lazy val runLocal: Boolean =
-    try {
-      defaultConfig.getBoolean("runLocal")
-    } catch {
-      case _: Exception => throw new RuntimeException("Couldn't load the value runLocal. Please check the runLocal value in the application.conf file")
-    }
+  lazy val runLocal: Boolean = defaultConfig.getBoolean("runLocal")
 
   lazy val applicationConfig: Config = {
-    if (runLocal)
-      defaultConfig.withFallback(localConfig)
+    if (runLocal) {
+      defaultConfig.withFallback(ConfigFactory.load("services-local"))
+    }
     else defaultConfig
   }
 
@@ -53,5 +42,5 @@ trait Configuration {
 
   def readPropertyList(property: String) = applicationConfig.getStringList(property).asScala.toList
 
-  def keys(property: String) = applicationConfig.getObject("journeys").keySet().asScala.toList
+  def keys(property: String) = applicationConfig.getObject(property).keySet().asScala.toList
 }
