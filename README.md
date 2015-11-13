@@ -143,8 +143,11 @@ sbt test
 ### More about the journey configuration.
 
 `description` will be assigned to the journey in the test report
+
 `load` is the number of journeys that will be started every second
+
 `feeder` is the relative path to the csv feeder file. More [here](http://gatling.io/docs/2.1.7/session/feeder.html#csv-feeders)
+
 `parts` is the list of parts that combined create your journey
 
 You can have as many journeys as you like in journeys.conf, the simulation will start and run them all together.
@@ -156,11 +159,17 @@ Contains the name of the service and the port when running locally. Read the ser
 ### More about application.conf
 
 `runLocal` boolean value to run test locally. Default value is true.
+
 `base-url` is the default url for every service. Read the application.conf file for more details and examples.
+
 `rampup_time` is the time in minutes for the simulation to inject the users with a linear ramp up
+
 `constant_rate_time` is the time in minutes for the simulation to inject users at a constant rate
+
 `rampdown_time` is the time in minutes for the simulation to inject the users with a linear ramp down
-`load_percentage` is the percentage of the load for the journeys. Read the application.conf file for more details and examples. 
+
+`load_percentage` is the percentage of the load for the journeys. Read the application.conf file for more details and examples.
+
 `journeys_to_run` contains the journeys that will be executed. Leave it empty if you want to run all the journeys
 
 ### License
