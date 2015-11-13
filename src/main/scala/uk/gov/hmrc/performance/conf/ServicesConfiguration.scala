@@ -21,7 +21,7 @@ import scala.util.Try
 trait ServicesConfiguration extends Configuration {
 
   private val baseUrl = {
-    val prop = readProperty("base-url")
+    val prop = readProperty("baseUrl")
     if (prop.isEmpty) throw new RuntimeException
     else prop
   }

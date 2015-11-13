@@ -107,14 +107,14 @@ application.conf
 ```
 runLocal = true
 
-base-url = "http://helloworld-service.co.uk"
+baseUrl = "http://helloworld-service.co.uk"
 
 perftest {
-  rampup_time = 1
-  constant_rate_time = 5
-  rampdown_time = 1
-  load_percentage = 100
-  journeys_to_run = [
+  rampupTime = 1
+  constantRateTime = 5
+  rampdownTime = 1
+  loadPercentage = 100
+  journeysToRun = [
     hello-world-1,
     hello-world-2
   ]
@@ -160,17 +160,17 @@ Contains the name of the service and the port when running locally. Read the ser
 
 `runLocal` boolean value to run test locally. Default value is true.
 
-`base-url` is the default url for every service. Read the application.conf file for more details and examples.
+`baseUrl` is the default url for every service. Read the application.conf file for more details and examples.
 
-`rampup_time` is the time in minutes for the simulation to inject the users with a linear ramp up
+`rampupTime` is the time in minutes for the simulation to inject the users with a linear ramp up
 
-`constant_rate_time` is the time in minutes for the simulation to inject users at a constant rate
+`constantRateTime` is the time in minutes for the simulation to inject users at a constant rate
 
-`rampdown_time` is the time in minutes for the simulation to inject the users with a linear ramp down
+`rampdownTime` is the time in minutes for the simulation to inject the users with a linear ramp down
 
-`load_percentage` is the percentage of the load for the journeys. Read the application.conf file for more details and examples.
+`loadPercentage` is the percentage of the load for the journeys. Read the application.conf file for more details and examples.
 
-`journeys_to_run` contains the journeys that will be executed. Leave it empty if you want to run all the journeys
+`journeysToRun` contains the journeys that will be executed. Leave it empty if you want to run all the journeys
 
 ### License
 

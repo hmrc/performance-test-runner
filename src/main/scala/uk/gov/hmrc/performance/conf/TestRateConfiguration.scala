@@ -23,10 +23,10 @@ trait TestRateConfiguration extends Configuration {
 
   import scala.concurrent.duration._
 
-  lazy val rampUpTime: FiniteDuration = readProperty("perftest.rampup_time").toInt minutes
-  lazy val rampDownTime: FiniteDuration = readProperty("perftest.rampdown_time").toInt minutes
-  lazy val constantRateTime: FiniteDuration = readProperty("perftest.constant_rate_time").toInt minutes
-  lazy val loadPercentage: Double = readProperty("perftest.load_percentage").toDouble / 100D
+  lazy val rampUpTime: FiniteDuration = readProperty("perftest.rampupTime").toInt minutes
+  lazy val rampDownTime: FiniteDuration = readProperty("perftest.rampdownTime").toInt minutes
+  lazy val constantRateTime: FiniteDuration = readProperty("perftest.constantRateTime").toInt minutes
+  lazy val loadPercentage: Double = readProperty("perftest.loadPercentage").toDouble / 100D
   lazy val runSingleUserJourney: Boolean = Try(readProperty("perftest.single_journey").toBoolean).getOrElse(false)
 
 }

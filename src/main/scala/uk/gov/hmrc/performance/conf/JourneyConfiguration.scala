@@ -21,7 +21,7 @@ trait JourneyConfiguration extends Configuration {
   val allJourneys = keys("journeys")
 
   val journeysToRun = {
-    val values = readPropertyList("perftest.journeys_to_run")
+    val values = readPropertyList("perftest.journeysToRun")
     if (values.isEmpty) allJourneys
     else {
       values.foreach((id: String) => checkJourneyName(id))
