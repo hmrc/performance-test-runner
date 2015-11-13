@@ -16,9 +16,12 @@
 
 package uk.gov.hmrc.performance.conf
 
+import com.typesafe.config.ConfigFactory
 import uk.gov.hmrc.play.test.UnitSpec
 
-class JourneyConfigurationSpec extends UnitSpec with JourneyConfiguration {
+import scala.util.Properties
+
+class JourneyConfigurationSpec extends UnitSpec {
 
   /*
     hello-world = {
@@ -33,8 +36,11 @@ class JourneyConfigurationSpec extends UnitSpec with JourneyConfiguration {
    */
 
   "JourneyConfiguration" should {
+
     "be able to read a well formed journey.conf file" in {
-      definitions should contain(JourneyDefinition(
+      val configUnderTest = new JourneyConfiguration {}
+
+      configUnderTest.definitions should contain(JourneyDefinition(
         id = "hello-world-1",
         description = "Hello world journey 1",
         load = 9.1,
@@ -42,8 +48,15 @@ class JourneyConfigurationSpec extends UnitSpec with JourneyConfiguration {
         feeder = "data/helloworld.csv"
       ))
     }
+
     "be able to return only journeys set in the application.config file" in {
-      definitions should contain theSameElementsAs Seq(JourneyDefinition(
+
+      Properties.setProp("journeysToRun.0", "hello-world-1")
+      Properties.setProp("journeysToRun.1", "hello-world-3")
+      ConfigFactory.invalidateCaches()
+      val configUnderTest = new JourneyConfiguration {}
+
+      configUnderTest.definitions should contain theSameElementsAs Seq(JourneyDefinition(
         id = "hello-world-1",
         description = "Hello world journey 1",
         load = 9.1,
@@ -58,6 +71,7 @@ class JourneyConfigurationSpec extends UnitSpec with JourneyConfiguration {
           feeder = "data/helloworld.csv"
         ))
     }
+
   }
 
 }

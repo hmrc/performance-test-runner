@@ -18,8 +18,6 @@ package uk.gov.hmrc.performance.conf
 
 import com.typesafe.config.{Config, ConfigFactory}
 
-import scala.util.Properties
-
 
 trait Configuration {
 
@@ -27,20 +25,20 @@ trait Configuration {
 
   private val defaultConfig = ConfigFactory.systemProperties().withFallback(ConfigFactory.load())
 
-  lazy val runLocal: Boolean = defaultConfig.getBoolean("runLocal")
+  lazy val runLocal: Boolean = !defaultConfig.hasPath("runLocal") || defaultConfig.getBoolean("runLocal")
 
   lazy val applicationConfig: Config = {
-    if (runLocal) {
+    if (runLocal)
       defaultConfig.withFallback(ConfigFactory.load("services-local"))
-    }
-    else defaultConfig
+    else
+      defaultConfig
   }
 
-  def readProperty(property: String): String = {
-    Properties.propOrElse(property, applicationConfig.getString(property))
-  }
+  def hasProperty(property: String): Boolean = applicationConfig.hasPath(property)
 
-  def readPropertyList(property: String) = applicationConfig.getStringList(property).asScala.toList
+  def readProperty(property: String): String = applicationConfig.getString(property)
 
-  def keys(property: String) = applicationConfig.getObject(property).keySet().asScala.toList
+  def readPropertyList(property: String): List[String] = applicationConfig.getStringList(property).asScala.toList
+
+  def keys(property: String): List[String] = applicationConfig.getObject(property).keySet().asScala.toList
 }

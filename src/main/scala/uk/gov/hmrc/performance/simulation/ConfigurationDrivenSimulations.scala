@@ -18,7 +18,7 @@ package uk.gov.hmrc.performance.simulation
 
 import io.gatling.core.Predef._
 import io.gatling.core.structure.{PopulatedScenarioBuilder, ScenarioBuilder}
-import uk.gov.hmrc.performance.conf.{HttpConfiguration, JourneyConfiguration, TestRateConfiguration}
+import uk.gov.hmrc.performance.conf.{HttpConfiguration, JourneyConfiguration, PerftestConfiguration}
 
 import scala.util.Random
 
@@ -26,7 +26,7 @@ import scala.util.Random
 trait ConfigurationDrivenSimulations extends Simulation
 with HttpConfiguration
 with JourneyConfiguration
-with TestRateConfiguration {
+with PerftestConfiguration {
 
   private[simulation] val parts = scala.collection.mutable.MutableList[JourneyPart]()
 

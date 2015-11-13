@@ -22,7 +22,7 @@ trait ServicesConfiguration extends Configuration {
 
   private val baseUrl = {
     val prop = readProperty("baseUrl")
-    if (prop.isEmpty) throw new RuntimeException
+    if (prop.isEmpty) throw new RuntimeException("baseUrl is mandatory but couldn't be found in application.conf")
     else prop
   }
 

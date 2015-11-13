@@ -18,7 +18,7 @@ package uk.gov.hmrc.performance.conf
 
 import uk.gov.hmrc.play.test.UnitSpec
 
-class TestRateConfigurationSpec  extends UnitSpec with TestRateConfiguration {
+class TestRateConfigurationSpec  extends UnitSpec with PerftestConfiguration {
 
   import scala.concurrent.duration._
 

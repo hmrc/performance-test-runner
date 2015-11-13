@@ -18,19 +18,21 @@ package uk.gov.hmrc.performance.conf
 
 trait JourneyConfiguration extends Configuration {
 
-  val allJourneys = keys("journeys")
+  val allJourneys: List[String] = keys("journeys")
 
-  val journeysToRun = {
-    val values = readPropertyList("perftest.journeysToRun")
-    if (values.isEmpty) allJourneys
+  val journeysToRun: List[String] = {
+
+    if (!hasProperty("journeysToRun")) allJourneys
     else {
-      values.foreach((id: String) => checkJourneyName(id))
+      val values = readPropertyList("journeysToRun")
+      if (values.isEmpty) throw new RuntimeException(s"journeysToRun is empty. Check your journeys.conf file")
+        values.foreach((id: String) => checkJourneyName(id))
       values
     }
   }
 
   def checkJourneyName(id: String): Any = {
-    if (!allJourneys.contains(id)) throw new RuntimeException("Name of the journey couldn't be found in journeys.conf file")
+    if (!allJourneys.contains(id)) throw new RuntimeException(s"The test is configured to run '$id' but it couldn't be found in journeys.conf")
   }
 
   def definitions: Seq[JourneyDefinition] = {
