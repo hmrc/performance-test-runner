@@ -1,2 +1,2 @@
-username,password
-bob,12345678
+username,password,email,time
+bob,12345678,${random}@somemail.com,${currentTime}

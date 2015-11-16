@@ -19,6 +19,7 @@ package uk.gov.hmrc.performance.simulation
 import io.gatling.core.Predef._
 import io.gatling.core.structure.{PopulatedScenarioBuilder, ScenarioBuilder}
 import uk.gov.hmrc.performance.conf.{HttpConfiguration, JourneyConfiguration, PerftestConfiguration}
+import uk.gov.hmrc.performance.feeder.CsvFeeder
 
 import scala.util.Random
 
@@ -58,7 +59,7 @@ with PerftestConfiguration {
 
       new Journey {
 
-        lazy val users = csv(conf.feeder).circular
+        lazy val users = new CsvFeeder(conf.feeder)
 
         private val RNG = new Random
 

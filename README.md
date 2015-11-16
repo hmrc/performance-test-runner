@@ -130,6 +130,17 @@ helloworld.csv
 ```csv
 username,password
 bob,12345678
+alice,87654321
+```
+
+In your csv you can use placeholders:
+`${random}` is replaced with a random int value
+`${currentTime}` is replaced with the current time
+
+This allows you to create a csv with only one record but an infinite number of random values 
+```csv
+username,password
+my-${random}-user,12345678
 ```
 
 ### Run the test locally
