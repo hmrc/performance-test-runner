@@ -64,5 +64,18 @@ class ConfigurationSpec extends UnitSpec {
       configUnderTest.keys("journeys") should contain ("hello-world-2")
       configUnderTest.keys("journeys") should contain ("hello-world-3")
     }
+
+    "throw an exception if the key is not found" in {
+      val configUnderTest = new Configuration {}
+      intercept[Exception] {
+        configUnderTest.readProperty("iDoNotExist")
+      }
+    }
+
+    "return the default if the key is not found and a default is provided" in {
+      val configUnderTest = new Configuration {}
+      configUnderTest.readProperty("iDoNotExist", "imTheDefault") shouldBe "imTheDefault"
+    }
+
   }
 }

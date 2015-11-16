@@ -23,7 +23,7 @@ trait Configuration {
 
   import scala.collection.JavaConverters._
 
-  private val defaultConfig = ConfigFactory.systemProperties().withFallback(ConfigFactory.load())
+  private val defaultConfig = ConfigFactory.systemProperties().withFallback(ConfigFactory.load("journeys")).withFallback(ConfigFactory.load())
 
   lazy val runLocal: Boolean = !defaultConfig.hasPath("runLocal") || defaultConfig.getBoolean("runLocal")
 
@@ -37,6 +37,8 @@ trait Configuration {
   def hasProperty(property: String): Boolean = applicationConfig.hasPath(property)
 
   def readProperty(property: String): String = applicationConfig.getString(property)
+
+  def readProperty(property: String, default: String): String = try { applicationConfig.getString(property)} catch { case e: Throwable => default}
 
   def readPropertyList(property: String): List[String] = applicationConfig.getStringList(property).asScala.toList
 
