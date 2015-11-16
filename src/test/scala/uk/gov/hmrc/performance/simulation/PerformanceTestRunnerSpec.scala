@@ -19,14 +19,14 @@ package uk.gov.hmrc.performance.simulation
 import io.gatling.core.config.GatlingConfiguration
 import uk.gov.hmrc.play.test.UnitSpec
 
-class ConfigurationDrivenSimulationsSpec extends UnitSpec {
+class PerformanceTestRunnerSpec extends UnitSpec {
 
   import io.gatling.core.Predef._
   import io.gatling.http.Predef._
 
   GatlingConfiguration.setUpForTest()
 
-  class TestSimulation extends ConfigurationDrivenSimulations {
+  class TestSimulation extends PerformanceTestRunner {
 
     val foo = http("Get Foo").get(s"/foo")
     val bar = http("Get Bar").get(s"/bar")
@@ -38,7 +38,7 @@ class ConfigurationDrivenSimulationsSpec extends UnitSpec {
   }
 
 
-  class MalformedTestSimulation extends ConfigurationDrivenSimulations {
+  class MalformedTestSimulation extends PerformanceTestRunner {
 
     setup("some-id-1", "Some Description 1")
 

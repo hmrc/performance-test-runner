@@ -23,7 +23,7 @@ import uk.gov.hmrc.performance.conf.{HttpConfiguration, JourneyConfiguration, Pe
 import scala.util.Random
 
 
-trait ConfigurationDrivenSimulations extends Simulation
+trait PerformanceTestRunner extends Simulation
 with HttpConfiguration
 with JourneyConfiguration
 with PerftestConfiguration {
@@ -93,7 +93,14 @@ with PerftestConfiguration {
   })
 
   def runSimulation(): Unit = {
+
+
+    println(s"Setting up simulation ")
+
     if(runSingleUserJourney) {
+
+      println(s"'perfetest.singleJourney' is set to true, ignoring all loads and running with only one user per journey!")
+
       val injectedBuilders = journeys.map(scenario => {
         scenario.builder.inject(atOnceUsers(1))
       })
