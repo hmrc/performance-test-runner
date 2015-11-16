@@ -1,7 +1,7 @@
 
-# configuration-driven-simulation
+# performance-test-runner
 
-[![Build Status](https://travis-ci.org/hmrc/configuration-driven-simulation.svg?branch=master)](https://travis-ci.org/hmrc/configuration-driven-simulation) [ ![Download](https://api.bintray.com/packages/hmrc/releases/configuration-driven-simulation/images/download.svg) ](https://bintray.com/hmrc/releases/configuration-driven-simulation/_latestVersion)
+[![Build Status](https://travis-ci.org/hmrc/performance-test-runner.svg?branch=master)](https://travis-ci.org/hmrc/performance-test-runner) [ ![Download](https://api.bintray.com/packages/hmrc/releases/performance-test-runner/images/download.svg) ](https://bintray.com/hmrc/releases/performance-test-runner/_latestVersion)
 
 
 This is a wrapper around the [Gatling](http://gatling.io/) load testing framework, 
@@ -15,7 +15,7 @@ In your SBT build add:
 ```scala
 resolvers += Resolver.bintrayRepo("hmrc", "releases")
 
-libraryDependencies += "uk.gov.hmrc" %% "configuration-driven-simulation" % "x.x.x"
+libraryDependencies += "uk.gov.hmrc" %% "performance-test-runner" % "x.x.x"
 ```
 
 ### Implement your first simulation

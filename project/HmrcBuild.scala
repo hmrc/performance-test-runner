@@ -5,7 +5,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning
 
 object HmrcBuild extends Build {
 
-  val nameApp = "configuration-driven-simulation"
+  val nameApp = "performance-test-runner"
 
   val appDependencies = Seq(
     "uk.gov.hmrc" %% "play-json-logger" % "2.1.0",
