@@ -31,7 +31,7 @@ trait Configuration {
     if (runLocal)
       defaultConfig.withFallback(ConfigFactory.load("services-local"))
     else
-      defaultConfig
+      defaultConfig.withFallback(ConfigFactory.load("services"))
   }
 
   def hasProperty(property: String): Boolean = applicationConfig.hasPath(property)

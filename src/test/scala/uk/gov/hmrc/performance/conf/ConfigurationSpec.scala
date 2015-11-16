@@ -51,10 +51,22 @@ class ConfigurationSpec extends UnitSpec {
       ConfigFactory.invalidateCaches()
     }
 
-    "read local configurations" in {
+    "read services-local configurations if runLocal = true" in {
 
       val configUnderTest = new Configuration {}
       configUnderTest.readProperty("services.helloworld-service.port") shouldBe "9000"
+    }
+
+    "read services configurations if runLocal = false" in {
+
+      Properties.setProp("runLocal", "false")
+      ConfigFactory.invalidateCaches()
+
+      val configUnderTest = new Configuration {}
+      configUnderTest.readProperty("services.helloworld-service.host") shouldBe "internal.helloworld-service.co.uk"
+
+      Properties.clearProp("runLocal")
+      ConfigFactory.invalidateCaches()
     }
 
     "read list of keys" in {

@@ -31,15 +31,15 @@ trait ServicesConfiguration extends Configuration {
   }
 
   def baseUrlFor(serviceName: String): String = {
-    val protocol = Try(readProperty(s"services.$serviceName.protocol")).getOrElse("")
-    val host = Try(readProperty(s"services.$serviceName.host")).getOrElse("")
-    val port = Try(readProperty(s"services.$serviceName.port")).getOrElse("")
+    val protocol = readProperty(s"services.$serviceName.protocol", "")
+    val host = readProperty(s"services.$serviceName.host", "")
+    val port = readProperty(s"services.$serviceName.port", "")
 
     if (serviceIsDefined(protocol, host, port)) {
 
       val protocolOrDefault = if (protocol.isEmpty) "http" else protocol
       val hostOrDefault = if (host.isEmpty) "localhost" else host
-      val portOrDefault = if (port.isEmpty) "80" else port
+      val portOrDefault = if (port.isEmpty) "8080" else port
 
       urlFor(protocolOrDefault, hostOrDefault, portOrDefault)
     } else {

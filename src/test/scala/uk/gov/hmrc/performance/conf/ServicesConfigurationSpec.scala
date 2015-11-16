@@ -16,7 +16,10 @@
 
 package uk.gov.hmrc.performance.conf
 
+import com.typesafe.config.ConfigFactory
 import uk.gov.hmrc.play.test.UnitSpec
+
+import scala.util.Properties
 
 class ServicesConfigurationSpec extends UnitSpec with ServicesConfiguration {
 
@@ -48,6 +51,24 @@ class ServicesConfigurationSpec extends UnitSpec with ServicesConfiguration {
 
       // then
       baseUrl shouldBe expectedBaseUrl
+    }
+
+    "read services-local configurations if runLocal = true" in {
+
+      val configUnderTest = new ServicesConfiguration {}
+      configUnderTest.baseUrlFor("helloworld-service") shouldBe "http://localhost:9000"
+    }
+
+    "read services configurations if runLocal = false" in {
+
+      Properties.setProp("runLocal", "false")
+      ConfigFactory.invalidateCaches()
+
+      val configUnderTest = new ServicesConfiguration {}
+      configUnderTest.baseUrlFor("helloworld-service") shouldBe "http://internal.helloworld-service.co.uk:8080"
+
+      Properties.clearProp("runLocal")
+      ConfigFactory.invalidateCaches()
     }
   }
 
