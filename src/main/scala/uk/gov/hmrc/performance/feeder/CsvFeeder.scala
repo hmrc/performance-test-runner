@@ -38,11 +38,13 @@ class CsvFeeder(feederFile: String) extends Feeder[String] {
 
   override def next(): Map[String, String] = {
     val record: Record[String] = regularCsvFeeder.next()
+    val randomInt: String = Math.abs(rng.nextInt()).toString
+    val now: String = System.currentTimeMillis().toString
 
     record.map {
       case (k, v) => {
-        val vRand: String = v.toString.replaceAll("""\$\{random\}""", rng.nextInt().toString)
-        val vTime: String = vRand.toString.replaceAll("""\$\{currentTime\}""", System.currentTimeMillis().toString)
+        val vRand: String = v.toString.replaceAll("""\$\{random\}""", randomInt)
+        val vTime: String = vRand.toString.replaceAll("""\$\{currentTime\}""", now)
         (k, vTime)
       }
     }

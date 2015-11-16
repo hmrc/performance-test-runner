@@ -32,6 +32,12 @@ class CsvFeederSpec extends UnitSpec {
       next("password") shouldBe "12345678"
     }
 
+    "create only one random per request" in {
+      val feeder: CsvFeeder = new CsvFeeder("data/randomFeeder.csv")
+      val next: Map[String, String] = feeder.next()
+      next("username") shouldBe next("password")
+    }
+
     "replace the random placeholder" in {
       val feeder: CsvFeeder = new CsvFeeder("data/helloworld.csv")
       val next: Map[String, String] = feeder.next()
