@@ -44,7 +44,7 @@ class JourneyConfigurationSpec extends UnitSpec {
         id = "hello-world-1",
         description = "Hello world journey 1",
         load = 9.1,
-        parts = List("login", "helloworld-home"),
+        parts = List("login", "home"),
         feeder = "data/helloworld.csv"
       ))
     }
@@ -60,16 +60,20 @@ class JourneyConfigurationSpec extends UnitSpec {
         id = "hello-world-1",
         description = "Hello world journey 1",
         load = 9.1,
-        parts = List("login", "helloworld-home"),
+        parts = List("login", "home"),
         feeder = "data/helloworld.csv"
       ),
         JourneyDefinition(
           id = "hello-world-3",
           description = "Hello world journey 3",
-          load = 3.3,
-          parts = List("helloworld-home"),
+          load = 0.1,
+          parts = List("home"),
           feeder = "data/helloworld.csv"
         ))
+
+      Properties.clearProp("journeysToRun.0")
+      Properties.clearProp("journeysToRun.1")
+      ConfigFactory.invalidateCaches()
     }
 
   }
