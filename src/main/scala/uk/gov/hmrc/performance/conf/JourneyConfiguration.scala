@@ -40,7 +40,7 @@ trait JourneyConfiguration extends Configuration {
       val description = readProperty(s"journeys.$id.description")
       val load = readProperty(s"journeys.$id.load").toDouble
       val parts = readPropertyList(s"journeys.$id.parts")
-      val feeder = readProperty(s"journeys.$id.feeder")
+      val feeder = readProperty(s"journeys.$id.feeder","")
       JourneyDefinition(id, description, load, parts, feeder)
     })
   }

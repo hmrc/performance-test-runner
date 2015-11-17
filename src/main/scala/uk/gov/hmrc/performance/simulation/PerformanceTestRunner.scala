@@ -59,15 +59,17 @@ with PerftestConfiguration {
 
       new Journey {
 
-        lazy val users = new CsvFeeder(conf.feeder)
+        lazy val feeder = conf.feeder
+        val RNG = new Random
 
-        private val RNG = new Random
-
-        override lazy val builder: ScenarioBuilder = scenario(conf.description)
-          .feed(users)
-          .feed(Iterator.continually(Map("currentTime" -> System.currentTimeMillis().toString)))
-          .feed(Iterator.continually(Map("random" -> Math.abs(RNG.nextInt()))))
-          .exitBlockOnFail(exec(chain))
+        override lazy val builder: ScenarioBuilder = {
+          val scenarioBuilder = scenario(conf.description)
+          if (!feeder.isEmpty) scenarioBuilder.feed(new CsvFeeder(feeder))
+          scenarioBuilder
+            .feed(Iterator.continually(Map("currentTime" -> System.currentTimeMillis().toString)))
+            .feed(Iterator.continually(Map("random" -> Math.abs(RNG.nextInt()))))
+            .exitBlockOnFail(exec(chain))
+        }
 
         override lazy val load: Double = conf.load
       }
@@ -98,7 +100,7 @@ with PerftestConfiguration {
 
     println(s"Setting up simulation ")
 
-    if(runSingleUserJourney) {
+    if (runSingleUserJourney) {
 
       println(s"'perfetest.runSmokeTest' is set to true, ignoring all loads and running with only one user per journey!")
 
