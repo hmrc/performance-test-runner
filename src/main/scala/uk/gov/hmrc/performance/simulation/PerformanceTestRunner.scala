@@ -100,7 +100,7 @@ with PerftestConfiguration {
 
     if(runSingleUserJourney) {
 
-      println(s"'perfetest.singleJourney' is set to true, ignoring all loads and running with only one user per journey!")
+      println(s"'perfetest.runSmokeTest' is set to true, ignoring all loads and running with only one user per journey!")
 
       val injectedBuilders = journeys.map(scenario => {
         scenario.builder.inject(atOnceUsers(1))

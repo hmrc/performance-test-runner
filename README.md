@@ -143,9 +143,17 @@ username,password
 my-${random}-user,12345678
 ```
 
-### Run the test locally
+### Run a smoke test
 
-To run the performance test execute
+To run a smoke test through all journeys, with one user only, set the following.
+
+```
+sbt -Dperftest.runSmokeTest=true test
+```
+
+### Run the test
+
+To run the full performance test execute
 
 ```
 sbt test
@@ -163,9 +171,11 @@ sbt test
 
 You can have as many journeys as you like in journeys.conf, the simulation will start and run them all together.
 
+
 ### More about the services configuration.
 
 Contains the name of the service and the port when running locally. Read the services-local.conf file for more details and examples.
+
 
 ### More about application.conf
 
@@ -182,6 +192,7 @@ Contains the name of the service and the port when running locally. Read the ser
 `loadPercentage` is the percentage of the load for the journeys. Read the application.conf file for more details and examples.
 
 `journeysToRun` contains the journeys that will be executed. Leave it empty if you want to run all the journeys
+
 
 ### License
 
