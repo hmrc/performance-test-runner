@@ -65,7 +65,7 @@ class ServicesConfigurationSpec extends UnitSpec with ServicesConfiguration {
       ConfigFactory.invalidateCaches()
 
       val configUnderTest = new ServicesConfiguration {}
-      configUnderTest.baseUrlFor("helloworld-service") shouldBe "http://internal.helloworld-service.co.uk:8080"
+      configUnderTest.baseUrlFor("helloworld-service") shouldBe "http://internal.helloworld-service.co.uk"
 
       Properties.clearProp("runLocal")
       ConfigFactory.invalidateCaches()

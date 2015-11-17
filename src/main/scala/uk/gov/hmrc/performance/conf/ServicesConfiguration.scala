@@ -39,7 +39,7 @@ trait ServicesConfiguration extends Configuration {
 
       val protocolOrDefault = if (protocol.isEmpty) "http" else protocol
       val hostOrDefault = if (host.isEmpty) "localhost" else host
-      val portOrDefault = if (port.isEmpty) "8080" else port
+      val portOrDefault = if (port.isEmpty) "80" else port
 
       urlFor(protocolOrDefault, hostOrDefault, portOrDefault)
     } else {
