@@ -114,7 +114,7 @@ with PerftestConfiguration {
     } else {
       setUp(withInjectedLoad(journeys): _*)
         .protocols(httpProtocol)
-        .assertions(global.failedRequests.percent.lessThan(0))
+        .assertions(global.failedRequests.percent.lessThan(1))
     }
   }
 }
