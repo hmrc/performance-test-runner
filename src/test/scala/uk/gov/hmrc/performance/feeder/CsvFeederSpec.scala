@@ -49,6 +49,51 @@ class CsvFeederSpec extends UnitSpec {
       val next: Map[String, String] = feeder.next()
       next("time") matches "^[0-9]*"
     }
+
+    "replace the range place holder" in {
+      val feeder: CsvFeeder = new CsvFeeder("data/range.csv")
+      feeder.next()("username") shouldBe "bob-000001"
+      feeder.next()("username") shouldBe "bob-000002"
+    }
   }
 
+  "the range" should {
+    "be reused in the same journey" in {
+      val feeder: CsvFeeder = new CsvFeeder("data/range.csv")
+      val next: Map[String, String] = feeder.next()
+      next("username") shouldBe "bob-000001"
+      next("password") shouldBe "000001"
+    }
+
+    "restart from 1 once max is reached" in {
+      val feeder: CsvFeeder = new CsvFeeder("data/range.csv")
+      feeder.next()("other") shouldBe "1"
+      feeder.next()("other") shouldBe "2"
+      feeder.next()("other") shouldBe "3"
+      feeder.next()("other") shouldBe "4"
+      feeder.next()("other") shouldBe "5"
+      feeder.next()("other") shouldBe "6"
+      feeder.next()("other") shouldBe "7"
+      feeder.next()("other") shouldBe "8"
+      feeder.next()("other") shouldBe "9"
+      feeder.next()("other") shouldBe "1"
+    }
+
+    "use different counters for different range sizes" in {
+      val feeder: CsvFeeder = new CsvFeeder("data/range.csv")
+      feeder.next()("other") shouldBe "1"
+      feeder.next()("other") shouldBe "2"
+      feeder.next()("other") shouldBe "3"
+      feeder.next()("other") shouldBe "4"
+      feeder.next()("other") shouldBe "5"
+      feeder.next()("other") shouldBe "6"
+      feeder.next()("other") shouldBe "7"
+      feeder.next()("other") shouldBe "8"
+      feeder.next()("other") shouldBe "9"
+
+      val next: Map[String, String] = feeder.next()
+      next("other") shouldBe "1"
+      next("password") shouldBe "000010"
+    }
+  }
 }

@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.performance.feeder
 
+import java.util.concurrent.atomic.AtomicLong
+
 import io.gatling.core.config.Resource
 import io.gatling.core.feeder.{SeparatedValuesParser, Feeder, JsonFeederFileParser, Record}
 import io.gatling.core.util.RoundRobin
@@ -34,20 +36,52 @@ class CsvFeeder(feederFile: String) extends Feeder[String] {
 
   private val rng = new Random
 
+  private val ranges: scala.collection.mutable.Map[Int, AtomicLong] = new scala.collection.mutable.HashMap()
+
   override def hasNext = true
+
+  private val rangeStr = """.*(\$\{range-([\d]+)\})"""
+  private val rangeR = rangeStr.r
+
+
+  def replaceRange(value: String): String = {
+    value match {
+      case rangeR(range, lengthStr) => {
+        val length = lengthStr.toInt
+        if (!ranges.isDefinedAt(length)) ranges += (length -> new AtomicLong(1))
+
+        val formatter = s"%0${length}d"
+        val rangeValue = formatter.format(ranges(length).longValue)
+
+        value.replaceAll( """\$\{range-""" + length + """\}""", rangeValue)
+      }
+      case _ => value
+    }
+  }
+
+  def incrementRanges(): Unit = {
+
+    ranges.foreach {
+      case (r, l) => {
+        if (l.longValue < (math.pow(10, r) - 1)) ranges(r).incrementAndGet
+        else ranges(r).set(1)
+      }
+    }
+  }
 
   override def next(): Map[String, String] = {
     val record: Record[String] = regularCsvFeeder.next()
     val randomInt: String = Math.abs(rng.nextInt()).toString
     val now: String = System.currentTimeMillis().toString
+    incrementRanges()
 
     record.map {
       case (k, v) => {
-        val vRand: String = v.toString.replaceAll("""\$\{random\}""", randomInt)
-        val vTime: String = vRand.toString.replaceAll("""\$\{currentTime\}""", now)
-        (k, vTime)
+        val vRand: String = v.toString.replaceAll( """\$\{random\}""", randomInt)
+        val vTime: String = vRand.toString.replaceAll( """\$\{currentTime\}""", now)
+        val vRange: String = replaceRange(vTime)
+        (k, vRange)
       }
     }
-
   }
 }

@@ -133,9 +133,12 @@ bob,12345678
 alice,87654321
 ```
 
-In your csv you can use placeholders:
-`${random}` is replaced with a random int value
-`${currentTime}` is replaced with the current time
+In your csv you can use placeholders:<br>
+`${random}` is replaced with a random int value<br>
+`${currentTime}` is replaced with the current time in milliseconds<br>
+`${range-X}` is replaced by a string representation of number made of X digits. 
+The number is incremental and starts from 1 again when it reaches the max value. 
+For example ${range-3} will be replaced with '001' the first time, '002' the next and so on. 
 
 This allows you to create a csv with only one record but an infinite number of random values 
 ```csv

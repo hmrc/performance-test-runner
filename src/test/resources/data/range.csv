@@ -1,0 +1,2 @@
+username,password,other
+bob-${range-6},${range-6},${range-1}
