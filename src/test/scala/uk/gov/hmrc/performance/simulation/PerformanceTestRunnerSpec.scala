@@ -33,7 +33,7 @@ class PerformanceTestRunnerSpec extends UnitSpec {
 
     setup("some-id-1", "Some Description 1") withRequests (foo, bar)
 
-    setup("some-id-2", "Some Description 2") withRequests bar
+    setup("some-id-2", "Some Description 2") withRequests bar toRunIf("", "")
 
   }
 
@@ -43,8 +43,6 @@ class PerformanceTestRunnerSpec extends UnitSpec {
     setup("some-id-1", "Some Description 1")
 
   }
-
-
 
   "The simulation" should {
     "create some parts" in {

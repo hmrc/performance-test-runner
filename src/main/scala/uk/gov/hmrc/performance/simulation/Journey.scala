@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.performance.simulation
 
+import io.gatling.core.session.Expression
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
 import io.gatling.http.request.builder.HttpRequestBuilder
 
@@ -33,10 +34,19 @@ trait Journey {
 case class JourneyPart(id: String, description: String) {
 
   val rb = scala.collection.mutable.MutableList[HttpRequestBuilder]()
+  var conditionallyRun: ChainBuilder => ChainBuilder = (cb) => cb
 
   def builder: ChainBuilder =
     if (rb.isEmpty) throw new scala.IllegalArgumentException(s"'$id' must have at least one request")
-    else rb.tail.foldLeft(exec(rb.head))((ex, trb) => ex.exec(trb))
+    else conditionallyRun(rb.tail.foldLeft(exec(rb.head))((ex, trb) => ex.exec(trb)))
 
-  def withRequests(requests: HttpRequestBuilder*): Unit = rb ++= requests
+  def withRequests(requests: HttpRequestBuilder*): JourneyPart = {
+    rb ++= requests
+    this
+  }
+
+  def toRunIf(sessionKey : Expression[String], value : String): JourneyPart = {
+    conditionallyRun = doIf(sessionKey, value)
+    this
+  }
 }
