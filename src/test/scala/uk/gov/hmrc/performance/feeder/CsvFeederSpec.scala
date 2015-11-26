@@ -65,6 +65,12 @@ class CsvFeederSpec extends UnitSpec {
       next("password") shouldBe "000001"
     }
 
+    "should work in the middle of a string" in {
+      val feeder: CsvFeeder = new CsvFeeder("data/range.csv")
+      val next: Map[String, String] = feeder.next()
+      next("withRangeInTheMiddle") shouldBe "90000019"
+    }
+
     "restart from 1 once max is reached" in {
       val feeder: CsvFeeder = new CsvFeeder("data/range.csv")
       feeder.next()("other") shouldBe "1"

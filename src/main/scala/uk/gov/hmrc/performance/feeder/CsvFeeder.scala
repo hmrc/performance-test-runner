@@ -40,7 +40,7 @@ class CsvFeeder(feederFile: String) extends Feeder[String] {
 
   override def hasNext = true
 
-  private val rangeStr = """.*(\$\{range-([\d]+)\})"""
+  private val rangeStr = """.*(\$\{range-([\d]+)\}).*"""
   private val rangeR = rangeStr.r
 
 
