@@ -21,6 +21,8 @@ import io.gatling.core.structure.{PopulatedScenarioBuilder, ScenarioBuilder}
 import uk.gov.hmrc.performance.conf.{HttpConfiguration, JourneyConfiguration, PerftestConfiguration}
 import uk.gov.hmrc.performance.feeder.CsvFeeder
 
+import scala.concurrent.duration
+import scala.concurrent.duration.FiniteDuration
 import scala.util.Random
 
 
@@ -98,6 +100,8 @@ with PerftestConfiguration {
 
   def runSimulation(): Unit = {
 
+    import scala.concurrent.duration._
+    val timeoutAtEndOfTest: FiniteDuration = 5 minutes
 
     println(s"Setting up simulation ")
 
@@ -114,6 +118,7 @@ with PerftestConfiguration {
         .assertions(global.failedRequests.count.is(0))
     } else {
       setUp(withInjectedLoad(journeys): _*)
+        .maxDuration(rampUpTime + constantRateTime + rampDownTime + timeoutAtEndOfTest)
         .protocols(httpProtocol)
         .assertions(global.failedRequests.percent.lessThan(1))
     }
