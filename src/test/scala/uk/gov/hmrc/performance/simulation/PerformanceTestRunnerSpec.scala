@@ -16,8 +16,11 @@
 
 package uk.gov.hmrc.performance.simulation
 
+import io.gatling.core.action.builder.PauseBuilder
 import io.gatling.core.config.GatlingConfiguration
 import uk.gov.hmrc.play.test.UnitSpec
+
+import scala.concurrent.duration._
 
 class PerformanceTestRunnerSpec extends UnitSpec {
 
@@ -26,28 +29,28 @@ class PerformanceTestRunnerSpec extends UnitSpec {
 
   GatlingConfiguration.setUpForTest()
 
-  class TestSimulation extends PerformanceTestRunner {
-
+  class TestRequestsSimulation extends PerformanceTestRunner {
     val foo = http("Get Foo").get(s"/foo")
     val bar = http("Get Bar").get(s"/bar")
 
-    setup("some-id-1", "Some Description 1") withRequests (foo, bar)
-
+    setup("some-id-1", "Some Description 1") withRequests(foo, bar)
     setup("some-id-2", "Some Description 2") withRequests bar toRunIf("", "")
-
   }
 
+  class TestActionsSimulation extends PerformanceTestRunner {
+    val foo = http("Get Foo").get(s"/foo")
+    val pause = new PauseBuilder(1 milliseconds, None)
+
+    setup("some-id-1", "Some Description 1") withActions(foo, pause)
+  }
 
   class MalformedTestSimulation extends PerformanceTestRunner {
-
     setup("some-id-1", "Some Description 1")
-
   }
 
   "The simulation" should {
-    "create some parts" in {
-
-      val simulation: TestSimulation = new TestSimulation()
+    "create some parts from http requests" in {
+      val simulation: TestRequestsSimulation = new TestRequestsSimulation()
 
       simulation.parts.size shouldBe 2
 
@@ -59,6 +62,16 @@ class PerformanceTestRunnerSpec extends UnitSpec {
       simulation.parts(1).description shouldBe "Some Description 2"
       simulation.parts(1).builder.actionBuilders.size shouldBe 1
 
+    }
+
+    "create some parts from general actions" in {
+      val simulation: TestActionsSimulation = new TestActionsSimulation()
+
+      simulation.parts.size shouldBe 1
+
+      simulation.parts.head.id shouldBe "some-id-1"
+      simulation.parts.head.description shouldBe "Some Description 1"
+      simulation.parts.head.builder.actionBuilders.size shouldBe 2
     }
 
     "Throw an exception if the journey part has no requests" in {

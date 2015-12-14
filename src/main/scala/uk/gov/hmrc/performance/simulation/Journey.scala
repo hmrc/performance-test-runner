@@ -16,36 +16,38 @@
 
 package uk.gov.hmrc.performance.simulation
 
+import io.gatling.core.Predef._
+import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.core.session.Expression
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
 import io.gatling.http.request.builder.HttpRequestBuilder
 
-
-import io.gatling.core.Predef._
-
 trait Journey {
-
   val load: Double
 
   def builder: ScenarioBuilder
-
 }
 
 case class JourneyPart(id: String, description: String) {
 
-  val rb = scala.collection.mutable.MutableList[HttpRequestBuilder]()
+  val ab = scala.collection.mutable.MutableList[ActionBuilder]()
   var conditionallyRun: ChainBuilder => ChainBuilder = (cb) => cb
 
   def builder: ChainBuilder =
-    if (rb.isEmpty) throw new scala.IllegalArgumentException(s"'$id' must have at least one request")
-    else conditionallyRun(rb.tail.foldLeft(exec(rb.head))((ex, trb) => ex.exec(trb)))
+    if (ab.isEmpty) throw new scala.IllegalArgumentException(s"'$id' must have at least one request")
+    else conditionallyRun(ab.tail.foldLeft(exec(ab.head))((ex, trb) => ex.exec(trb)))
 
   def withRequests(requests: HttpRequestBuilder*): JourneyPart = {
-    rb ++= requests
+    ab ++= requests.map(r => HttpRequestBuilder.toActionBuilder(r))
     this
   }
 
-  def toRunIf(sessionKey : Expression[String], value : String): JourneyPart = {
+  def withActions(actions: ActionBuilder*): JourneyPart = {
+    ab ++= actions
+    this
+  }
+
+  def toRunIf(sessionKey: Expression[String], value: String): JourneyPart = {
     conditionallyRun = doIf(sessionKey, value)
     this
   }
