@@ -89,5 +89,11 @@ class ConfigurationSpec extends UnitSpec {
       configUnderTest.readProperty("iDoNotExist", "imTheDefault") shouldBe "imTheDefault"
     }
 
+    "read a property as set of string" in {
+      val configUnderTest = new Configuration {}
+      configUnderTest.readPropertySet("journeys.hello-world-1.run-if") shouldBe Set("label-A")
+      configUnderTest.readPropertySetOrEmpty("journeys.hello-world-1.run-if") shouldBe Set("label-A")
+      configUnderTest.readPropertySetOrEmpty("journeys.hello-world-1.skip-if") shouldBe Set.empty
+    }
   }
 }
