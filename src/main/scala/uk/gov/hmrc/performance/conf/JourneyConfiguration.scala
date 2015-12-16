@@ -20,7 +20,7 @@ trait JourneyConfiguration extends Configuration {
 
   val allJourneys: List[String] = keys("journeys")
 
-  val journeysToRun: List[String] = {
+  val journeysAvailable: List[String] = {
 
     if (!hasProperty("journeysToRun")) allJourneys
     else {
@@ -35,15 +35,25 @@ trait JourneyConfiguration extends Configuration {
     if (!allJourneys.contains(id)) throw new RuntimeException(s"The test is configured to run '$id' but it couldn't be found in journeys.conf")
   }
 
-  def definitions: Seq[JourneyDefinition] = {
-    journeysToRun.map(id => {
+  def definitions(labels: Set[String] = Set.empty): Seq[JourneyDefinition] = {
+    val journeys = journeysAvailable.map(id => {
       val description = readProperty(s"journeys.$id.description")
       val load = readProperty(s"journeys.$id.load").toDouble
       val parts = readPropertyList(s"journeys.$id.parts")
       val feeder = readProperty(s"journeys.$id.feeder","")
-      JourneyDefinition(id, description, load, parts, feeder)
+      val runIf = readPropertySetOrEmpty(s"journeys.$id.run-if")
+      val skipIf = readPropertySetOrEmpty(s"journeys.$id.skip-if")
+      JourneyDefinition(id, description, load, parts, feeder, runIf, skipIf)
     })
+    if (labels.isEmpty) journeys
+    else journeys.filter(definition => definition.shouldRun(labels))
   }
 }
 
-case class JourneyDefinition(id: String, description: String, load: Double, parts: List[String], feeder: String)
+case class JourneyDefinition(id: String, description: String, load: Double, parts: List[String], feeder: String, runIf: Set[String] = Set.empty, skipIf: Set[String] = Set.empty) {
+  def shouldRun(testLabels: Set[String]): Boolean = {
+    if (runIf.intersect(skipIf).nonEmpty) throw new scala.RuntimeException(s"Invalid configuration for journey with id=$id. 'run-if' and 'skip-if' can't overlap")
+    if (skipIf.intersect(testLabels).nonEmpty) false
+    else runIf.isEmpty || runIf.intersect(testLabels).nonEmpty
+  }
+}

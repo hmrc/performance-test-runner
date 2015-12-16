@@ -21,8 +21,6 @@ import io.gatling.core.structure.{PopulatedScenarioBuilder, ScenarioBuilder}
 import uk.gov.hmrc.performance.conf.{HttpConfiguration, JourneyConfiguration, PerftestConfiguration}
 import uk.gov.hmrc.performance.feeder.CsvFeeder
 
-import scala.concurrent.duration
-import scala.concurrent.duration.FiniteDuration
 import scala.util.Random
 
 
@@ -44,7 +42,7 @@ with PerftestConfiguration {
 
     println(s"Implemented journey parts: ${parts.map(_.id).mkString(", ")}")
 
-    definitions.map(conf => {
+    definitions(labels).map(conf => {
 
       println(s"Setting up scenario '${conf.id}' to run at ${conf.load} JPS")
 

@@ -17,6 +17,8 @@
 package uk.gov.hmrc.performance.conf
 
 import com.typesafe.config.ConfigFactory
+import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.prop.Tables.Table
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.util.Properties
@@ -40,12 +42,26 @@ class JourneyConfigurationSpec extends UnitSpec {
     "be able to read a well formed journey.conf file" in {
       val configUnderTest = new JourneyConfiguration {}
 
-      configUnderTest.definitions should contain(JourneyDefinition(
+      configUnderTest.definitions() should contain(JourneyDefinition(
         id = "hello-world-1",
         description = "Hello world journey 1",
         load = 9.1,
         parts = List("login", "home"),
-        feeder = "data/helloworld.csv"
+        feeder = "data/helloworld.csv",
+        runIf = Set.empty
+      ))
+    }
+
+    "filter the definitions using test labels set if this is not empty" in {
+      val configUnderTest = new JourneyConfiguration {}
+
+      configUnderTest.definitions(Set("label-A")) shouldBe Seq(JourneyDefinition(
+        id = "hello-world-1",
+        description = "Hello world journey 1",
+        load = 9.1,
+        parts = List("login", "home"),
+        feeder = "data/helloworld.csv",
+        runIf = Set.empty
       ))
     }
 
@@ -56,19 +72,21 @@ class JourneyConfigurationSpec extends UnitSpec {
       ConfigFactory.invalidateCaches()
       val configUnderTest = new JourneyConfiguration {}
 
-      configUnderTest.definitions should contain theSameElementsAs Seq(JourneyDefinition(
+      configUnderTest.definitions() should contain theSameElementsAs Seq(JourneyDefinition(
         id = "hello-world-1",
         description = "Hello world journey 1",
         load = 9.1,
         parts = List("login", "home"),
-        feeder = "data/helloworld.csv"
+        feeder = "data/helloworld.csv",
+        runIf = Set.empty
       ),
         JourneyDefinition(
           id = "hello-world-3",
           description = "Hello world journey 3",
           load = 0.1,
           parts = List("home"),
-          feeder = "data/helloworld.csv"
+          feeder = "data/helloworld.csv",
+          runIf = Set("label-B")
         ))
 
       Properties.clearProp("journeysToRun.0")
@@ -78,4 +96,32 @@ class JourneyConfigurationSpec extends UnitSpec {
 
   }
 
+  "JourneyDefinition" should {
+
+    val scenarios = Table(
+      ("scenario", "runIf", "skipIf", "testLabels", "expectedResult"),
+      ("runIf, shouldIf and testLabels empty", Set.empty[String], Set.empty[String], Set.empty[String], true),
+      ("runIf and shouldIf empty, testLabels non-empty", Set.empty[String], Set.empty[String], Set[String]("A", "B"), true),
+      ("matching runIf and skipIf empty", Set[String]("A", "C"), Set.empty[String], Set[String]("A", "B"), true),
+      ("matching skipIf and runIf empty", Set.empty[String], Set[String]("A", "C"), Set[String]("A", "B"), false),
+      ("non-matching runIf and matching skipIf", Set[String]("C", "D"), Set[String]("B"), Set[String]("A", "B"), false),
+      ("runIf non-empty, shouldIf empty and testLabels empty", Set[String]("A", "B"), Set.empty[String], Set.empty[String], false)
+    )
+
+    forAll(scenarios) { (scenario: String, runIf: Set[String], skipIf: Set[String], testLabels: Set[String], expectedResult: Boolean) =>
+
+      s"return whether it should be executed - scenario: $scenario" in {
+        val journeyDefinition = JourneyDefinition("id", "desc", 0, List.empty, "feeder", runIf, skipIf)
+        journeyDefinition.shouldRun(testLabels) shouldBe expectedResult
+      }
+    }
+
+    "throw an exception when runIf and skipIf are overlapping" in {
+      val journeyDefinition = JourneyDefinition("id", "desc", 0, List.empty, "feeder", Set("A", "B"), Set("B", "C"))
+      val thrown = intercept[RuntimeException] {
+        journeyDefinition.shouldRun(Set.empty)
+      }
+      thrown.getMessage shouldBe "Invalid configuration for journey with id=id. 'run-if' and 'skip-if' can't overlap"
+    }
+  }
 }
