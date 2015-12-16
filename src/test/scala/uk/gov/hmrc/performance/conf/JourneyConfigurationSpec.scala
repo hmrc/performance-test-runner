@@ -48,7 +48,7 @@ class JourneyConfigurationSpec extends UnitSpec {
         load = 9.1,
         parts = List("login", "home"),
         feeder = "data/helloworld.csv",
-        runIf = Set("label-A")
+        runIf = Set.empty
       ))
     }
 
@@ -61,7 +61,7 @@ class JourneyConfigurationSpec extends UnitSpec {
         load = 9.1,
         parts = List("login", "home"),
         feeder = "data/helloworld.csv",
-        runIf = Set("label-A")
+        runIf = Set.empty
       ))
     }
 
@@ -78,7 +78,7 @@ class JourneyConfigurationSpec extends UnitSpec {
         load = 9.1,
         parts = List("login", "home"),
         feeder = "data/helloworld.csv",
-        runIf = Set("label-A")
+        runIf = Set.empty
       ),
         JourneyDefinition(
           id = "hello-world-3",
