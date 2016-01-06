@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 HM Revenue & Customs
+ * Copyright 2016 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package uk.gov.hmrc.performance.feeder
 import java.util.concurrent.atomic.AtomicLong
 
 import io.gatling.core.config.Resource
-import io.gatling.core.feeder.{SeparatedValuesParser, Feeder, JsonFeederFileParser, Record}
+import io.gatling.core.feeder.{Feeder, Record, SeparatedValuesParser}
 import io.gatling.core.util.RoundRobin
 import io.gatling.core.validation.{Failure, Success}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 HM Revenue & Customs
+ * Copyright 2016 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,15 +79,7 @@ class JourneyConfigurationSpec extends UnitSpec {
         parts = List("login", "home"),
         feeder = "data/helloworld.csv",
         runIf = Set.empty
-      ),
-        JourneyDefinition(
-          id = "hello-world-3",
-          description = "Hello world journey 3",
-          load = 0.1,
-          parts = List("home"),
-          feeder = "data/helloworld.csv",
-          runIf = Set("label-B")
-        ))
+      ))
 
       Properties.clearProp("journeysToRun.0")
       Properties.clearProp("journeysToRun.1")
