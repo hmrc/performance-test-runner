@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 HM Revenue & Customs
+ * Copyright 2016 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,7 @@ trait JourneyConfiguration extends Configuration {
       val skipIf = readPropertySetOrEmpty(s"journeys.$id.skip-if")
       JourneyDefinition(id, description, load, parts, feeder, runIf, skipIf)
     })
-    if (labels.isEmpty) journeys
-    else journeys.filter(definition => definition.shouldRun(labels))
+    journeys.filter(definition => definition.shouldRun(labels))
   }
 }
 
