@@ -53,6 +53,6 @@ case class JourneyDefinition(id: String, description: String, load: Double, part
   def shouldRun(testLabels: Set[String]): Boolean = {
     if (runIf.intersect(skipIf).nonEmpty) throw new scala.RuntimeException(s"Invalid configuration for journey with id=$id. 'run-if' and 'skip-if' can't overlap")
     if (skipIf.intersect(testLabels).nonEmpty) false
-    else runIf.isEmpty || runIf.intersect(testLabels).nonEmpty
+    else runIf.isEmpty || runIf.subsetOf(testLabels)
   }
 }
