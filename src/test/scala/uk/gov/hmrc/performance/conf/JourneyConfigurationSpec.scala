@@ -94,8 +94,9 @@ class JourneyConfigurationSpec extends UnitSpec {
       ("scenario", "runIf", "skipIf", "testLabels", "expectedResult"),
       ("runIf, shouldIf and testLabels empty", Set.empty[String], Set.empty[String], Set.empty[String], true),
       ("runIf and shouldIf empty, testLabels non-empty", Set.empty[String], Set.empty[String], Set[String]("A", "B"), true),
-      ("matching runIf and skipIf empty", Set[String]("A", "C"), Set.empty[String], Set[String]("A", "B"), true),
-      ("matching skipIf and runIf empty", Set.empty[String], Set[String]("A", "C"), Set[String]("A", "B"), false),
+      ("intersecting runIf and skipIf empty", Set[String]("A", "C"), Set.empty[String], Set[String]("A", "B"), false),
+      ("runIf subset of test labels and skipIf empty", Set[String]("A", "C"), Set.empty[String], Set[String]("A", "B", "C"), true),
+      ("intersecting skipIf and runIf empty", Set.empty[String], Set[String]("A", "C"), Set[String]("A", "B"), false),
       ("non-matching runIf and matching skipIf", Set[String]("C", "D"), Set[String]("B"), Set[String]("A", "B"), false),
       ("runIf non-empty, shouldIf empty and testLabels empty", Set[String]("A", "B"), Set.empty[String], Set.empty[String], false)
     )
