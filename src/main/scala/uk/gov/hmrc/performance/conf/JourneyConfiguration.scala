@@ -26,7 +26,7 @@ trait JourneyConfiguration extends Configuration {
     else {
       val values = readPropertyList("journeysToRun")
       if (values.isEmpty) throw new RuntimeException(s"journeysToRun is empty. Check your journeys.conf file")
-        values.foreach((id: String) => checkJourneyName(id))
+      values.foreach((id: String) => checkJourneyName(id))
       values
     }
   }
@@ -36,16 +36,45 @@ trait JourneyConfiguration extends Configuration {
   }
 
   def definitions(labels: Set[String] = Set.empty): Seq[JourneyDefinition] = {
-    val journeys = journeysAvailable.map(id => {
-      val description = readProperty(s"journeys.$id.description")
-      val load = readProperty(s"journeys.$id.load").toDouble
-      val parts = readPropertyList(s"journeys.$id.parts")
-      val feeder = readProperty(s"journeys.$id.feeder","")
-      val runIf = readPropertySetOrEmpty(s"journeys.$id.run-if")
-      val skipIf = readPropertySetOrEmpty(s"journeys.$id.skip-if")
-      JourneyDefinition(id, description, load, parts, feeder, runIf, skipIf)
-    })
+    val journeys = journeysAvailable
+      .filter(id => !readPropertyBooleanOption(s"journeys.$id.abstract").getOrElse(false))
+      .map(id => {
+        val journeyToExtend = readPropertyOption(s"journeys.$id.extends")
+        val abstractDescription = journeyToExtend.map { abstractJourneyId =>
+          validateExtendedJourney(abstractJourneyId)
+          readProperty(s"journeys.$abstractJourneyId.description")
+        }.getOrElse(readProperty(s"journeys.$id.description"))
+        val load = readProperty(s"journeys.$id.load").toDouble
+        val parts = journeyToExtend.map(abstractJourneyId => readPropertyList(s"journeys.$abstractJourneyId.parts")).getOrElse(readPropertyList(s"journeys.$id.parts"))
+        val feeder = journeyToExtend.map(abstractJourneyId => readProperty(s"journeys.$abstractJourneyId.feeder", "")).getOrElse(readProperty(s"journeys.$id.feeder", ""))
+        val runIf = readPropertySetOrEmpty(s"journeys.$id.run-if")
+        val skipIf = readPropertySetOrEmpty(s"journeys.$id.skip-if")
+        val description = generateDescription(abstractDescription, runIf, skipIf)
+        JourneyDefinition(id, description, load, parts, feeder, runIf, skipIf)
+      })
     journeys.filter(definition => definition.shouldRun(labels))
+  }
+
+  def validateExtendedJourney(abstractJourneyId: String): Unit = {
+    if (!hasProperty(s"journeys.$abstractJourneyId")) {
+      throw new scala.RuntimeException(s"the abstract journey $abstractJourneyId is not defined")
+    }
+    if (hasProperty(s"journeys.$abstractJourneyId.extends")) {
+      throw new scala.RuntimeException(s"the abstract journey $abstractJourneyId should not extend any other journey")
+    }
+    val extendedJourneyIsAbstract = readPropertyBooleanOption(s"journeys.$abstractJourneyId.abstract")
+    if (!extendedJourneyIsAbstract.getOrElse(false)) {
+      throw new scala.RuntimeException(s"the extended journey $abstractJourneyId should be abstract")
+    }
+  }
+
+  def generateDescription(abstractDescription: String, runIf: Set[String], skipIf: Set[String]): String = {
+    val runIfDescription = if (runIf.nonEmpty) "runIf " + s"[${runIf.mkString(",")}]" else ""
+    val skipIfDescription = if (skipIf.nonEmpty) "skipIf " + s"[${skipIf.mkString(",")}]" else ""
+    val and = if (runIf.nonEmpty && skipIf.nonEmpty) " and " else ""
+    val labels = runIfDescription + and + skipIfDescription
+    val separator = if (labels.nonEmpty) " - " else ""
+    abstractDescription + separator + labels
   }
 }
 

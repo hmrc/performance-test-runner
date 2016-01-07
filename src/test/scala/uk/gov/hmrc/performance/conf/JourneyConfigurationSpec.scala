@@ -16,11 +16,12 @@
 
 package uk.gov.hmrc.performance.conf
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.Tables.Table
 import uk.gov.hmrc.play.test.UnitSpec
 
+import scala.collection.JavaConverters._
 import scala.util.Properties
 
 class JourneyConfigurationSpec extends UnitSpec {
@@ -86,6 +87,103 @@ class JourneyConfigurationSpec extends UnitSpec {
       ConfigFactory.invalidateCaches()
     }
 
+    "an abstract journey should not extend any other journey" in {
+
+      val thrown = intercept[RuntimeException] {
+        val configUnderTest = new JourneyConfiguration {
+          override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, String](
+            "journeys.test-abstract-journey.abstract" -> "true",
+            "journeys.test-abstract-journey.extends" -> "base-journey",
+            "journeys.test-abstract-journey.load" -> "6",
+            "journeys.test-journey.extends" -> "test-abstract-journey"
+          ).asJava))
+        }
+        configUnderTest.definitions()
+      }
+      thrown.getMessage shouldBe "the abstract journey test-abstract-journey should not extend any other journey"
+    }
+
+    "an extended journey should be abstract - abstract key missing" in {
+
+      val thrown = intercept[RuntimeException] {
+        val configUnderTest = new JourneyConfiguration {
+          override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, String](
+            "journeys.test-journey.extends" -> "hello-world-1"
+          ).asJava))
+        }
+        configUnderTest.definitions()
+      }
+      thrown.getMessage shouldBe "the extended journey hello-world-1 should be abstract"
+    }
+
+    "an extended journey should be abstract - abstract key set to false" in {
+
+      val thrown = intercept[RuntimeException] {
+        val configUnderTest = new JourneyConfiguration {
+          override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, String](
+            "journeys.test-journey.extends" -> "hello-world-1",
+            "journeys.hello-world-1.abstract" -> "false"
+          ).asJava))
+        }
+        configUnderTest.definitions()
+      }
+      thrown.getMessage shouldBe "the extended journey hello-world-1 should be abstract"
+    }
+
+    "an abstract journey should be defined" in {
+
+      val thrown = intercept[RuntimeException] {
+        val configUnderTest = new JourneyConfiguration {
+          override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, String](
+            "journeys.test-journey.extends" -> "missing-journey"
+          ).asJava))
+        }
+        configUnderTest.definitions()
+      }
+      thrown.getMessage shouldBe "the abstract journey missing-journey is not defined"
+    }
+
+    val scenarios = Table(
+      ("scenario", "id", "expectedDescription", "expectedLoad", "expectedRunIf", "expectedSkipIf"),
+      ("with no runIf/skipIf", "test-journey-4", "Base journey", 8, Set.empty[String], Set.empty[String]),
+      ("with both runIf and skipIf", "test-journey-1", "Base journey - runIf [label-1] and skipIf [label-2,label-3]", 5, Set("label-1"), Set("label-2", "label-3")),
+      ("with skipIf only", "test-journey-2", "Base journey - skipIf [label-2,label-3]", 6, Set.empty[String], Set("label-2", "label-3")),
+      ("with runIf only", "test-journey-3", "Base journey - runIf [label-1]", 7, Set("label-1"), Set.empty[String])
+    )
+
+    forAll(scenarios) { (scenario, id, expectedDescription, expectedLoad, expectedRunIf, expectedSkipIf) =>
+      s"a journey can extend an abstract one - $scenario" in {
+        val configUnderTest = new JourneyConfiguration {
+          override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, AnyRef](
+            "journeys.test-journey-1.extends" -> "base-journey",
+            "journeys.test-journey-1.load" -> "5",
+            "journeys.test-journey-1.run-if" -> Set("label-1").asJava,
+            "journeys.test-journey-1.skip-if" -> Set("label-2", "label-3").asJava,
+
+            "journeys.test-journey-2.extends" -> "base-journey",
+            "journeys.test-journey-2.load" -> "6",
+            "journeys.test-journey-2.skip-if" -> Set("label-2", "label-3").asJava,
+
+            "journeys.test-journey-3.extends" -> "base-journey",
+            "journeys.test-journey-3.load" -> "7",
+            "journeys.test-journey-3.run-if" -> Set("label-1").asJava,
+
+            "journeys.test-journey-4.extends" -> "base-journey",
+            "journeys.test-journey-4.load" -> "8"
+          ).asJava))
+        }
+
+        configUnderTest.definitions(Set("label-1")) should contain(JourneyDefinition(
+          id = id,
+          description = expectedDescription,
+          load = expectedLoad,
+          parts = List("login", "home"),
+          feeder = "data/helloworld.csv",
+          runIf = expectedRunIf,
+          skipIf = expectedSkipIf
+        ))
+      }
+    }
   }
 
   "JourneyDefinition" should {
