@@ -46,7 +46,7 @@ trait JourneyConfiguration extends Configuration {
         }.getOrElse(readProperty(s"journeys.$id.description"))
         val load = readProperty(s"journeys.$id.load").toDouble
         val parts = journeyToExtend.map(abstractJourneyId => readPropertyList(s"journeys.$abstractJourneyId.parts")).getOrElse(readPropertyList(s"journeys.$id.parts"))
-        val feeder = journeyToExtend.map(abstractJourneyId => readProperty(s"journeys.$abstractJourneyId.feeder", "")).getOrElse(readProperty(s"journeys.$id.feeder", ""))
+        val feeder = readPropertyOption(s"journeys.$id.feeder").getOrElse(journeyToExtend.flatMap(abstractJourneyId => readPropertyOption(s"journeys.$abstractJourneyId.feeder")).getOrElse(""))
         val runIf = readPropertySetOrEmpty(s"journeys.$id.run-if")
         val skipIf = readPropertySetOrEmpty(s"journeys.$id.skip-if")
         val description = generateDescription(abstractDescription, runIf, skipIf)
