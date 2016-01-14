@@ -143,6 +143,27 @@ class JourneyConfigurationSpec extends UnitSpec {
       thrown.getMessage shouldBe "the abstract journey missing-journey is not defined"
     }
 
+    "the feeder defined in the non-abstract journey should override the one defined in the abstract one" in {
+
+      val configUnderTest = new JourneyConfiguration {
+        override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, AnyRef](
+
+            "journeys.abstract-journey.abstract" -> "true",
+            "journeys.abstract-journey.description" -> "Some Journey",
+            "journeys.abstract-journey.feeder" -> "data/helloworld.csv",
+            "journeys.abstract-journey.parts" -> Set("login", "home").asJava,
+
+            "journeys.test-journey.extends" -> "abstract-journey",
+            "journeys.test-journey.load" -> "1",
+            "journeys.test-journey.feeder" -> "data/feed-1.csv"
+          ).asJava))
+      }
+      val journey = configUnderTest.definitions().find(_.description == "Some Journey")
+      journey.isDefined shouldBe true
+      journey.get.feeder shouldBe "data/feed-1.csv"
+
+    }
+
     val scenarios = Table(
       ("scenario", "id", "expectedDescription", "expectedLoad", "expectedRunIf", "expectedSkipIf"),
       ("with no runIf/skipIf", "test-journey-4", "Base journey", 8, Set.empty[String], Set.empty[String]),
