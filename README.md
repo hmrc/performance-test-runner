@@ -152,7 +152,7 @@ my-${random}-user,12345678
 To run a smoke test through all journeys, with one user only, set the following.
 
 ```
-sbt -Dperftest.runSmokeTest=true test
+sbt -Dperftest.runSmokeTest=true -Djava.io.tmpdir=${WORKSPACE}/tmp test
 ```
 
 ### Run the test
@@ -160,7 +160,7 @@ sbt -Dperftest.runSmokeTest=true test
 To run the full performance test execute
 
 ```
-sbt test
+sbt -Djava.io.tmpdir=${WORKSPACE}/tmp test
 ```
 
 ### More about the journey configuration.
