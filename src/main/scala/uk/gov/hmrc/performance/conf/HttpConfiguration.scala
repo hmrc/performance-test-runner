@@ -31,6 +31,7 @@ trait HttpConfiguration extends Configuration {
     .acceptLanguageHeader("en-gb,en;q=0.5")
     .connection("close")
     .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:25.0) Gecko/20100101 Firefox/25.0")
+    .header("True-Client-IP", "${random}")
     .disableFollowRedirect
 
 }
