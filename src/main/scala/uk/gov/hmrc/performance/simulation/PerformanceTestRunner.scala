@@ -44,7 +44,7 @@ with PerftestConfiguration {
 
     definitions(labels).map(conf => {
 
-      println(s"Setting up scenario '${conf.id}' to run at ${conf.load} JPS")
+      println(s"Setting up scenario '${conf.id}' to run at ${conf.load} JPS and load to $loadPercentage %")
 
       val partsInJourney = conf.parts.map(p => parts.find(_.id.trim == p.trim)
         .getOrElse(throw new IllegalArgumentException(s"Scenario '${conf.id}' is configured to run '$p' but there is no journey part for it in the code"))
