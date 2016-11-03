@@ -33,7 +33,7 @@ with PerftestConfiguration {
 
   def setup(id: String, description: String): JourneyPart = {
 
-    val part: JourneyPart = new JourneyPart(id, description)
+    val part: JourneyPart = JourneyPart(id, description)
     parts += part
     part
   }
@@ -118,7 +118,7 @@ with PerftestConfiguration {
       setUp(withInjectedLoad(journeys): _*)
         .maxDuration(rampUpTime + constantRateTime + rampDownTime + timeoutAtEndOfTest)
         .protocols(httpProtocol)
-        .assertions(global.failedRequests.percent.lessThan(1))
+        .assertions(global.failedRequests.percent.lessThan(percentageFailureThreshold))
     }
   }
 }

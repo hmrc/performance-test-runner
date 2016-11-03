@@ -16,14 +16,79 @@
 
 package uk.gov.hmrc.performance.conf
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.Tables.Table
 import uk.gov.hmrc.play.test.UnitSpec
 
+import scala.concurrent.duration._
 import scala.util.Properties
 
 class PerftestConfigurationSpec extends UnitSpec {
+
+  "TestRateConfiguration defaults" should {
+
+    val perftestConfiguration = new PerftestConfiguration {
+      override lazy val applicationConfig: Config = ConfigFactory.empty()
+    }
+
+    "read the ramp up time" in {
+      perftestConfiguration.rampUpTime shouldBe (1 minute)
+    }
+
+    "read the constant rate time" in {
+      perftestConfiguration.constantRateTime shouldBe (5 minutes)
+    }
+
+    "read the ramp down time" in {
+      perftestConfiguration.rampDownTime shouldBe (1 minute)
+    }
+
+    "read the load percentage" in {
+      perftestConfiguration.loadPercentage shouldBe 1D
+    }
+    "read the percentage failure threshold" in {
+      perftestConfiguration.percentageFailureThreshold shouldBe 1
+    }
+  }
+
+
+  "TestRateConfiguration via provided test config file" should {
+
+    val perftestConfiguration = new PerftestConfiguration {
+
+      import collection.JavaConverters._
+
+      override lazy val applicationConfig: Config = ConfigFactory.parseMap(Map(
+        "perftest.rampupTime" -> 123,
+        "perftest.constantRateTime" -> 62,
+        "perftest.rampdownTime" -> 21,
+        "perftest.loadPercentage" -> 223,
+        "perftest.runSmokeTest" -> false,
+        "perftest.labels" -> "W, Z",
+        "perftest.percentageFailureThreshold" -> 19
+      ).asJava)
+    }
+
+    "read the ramp up time from the config file" in {
+      perftestConfiguration.rampUpTime shouldBe (123 minute)
+    }
+
+    "read the constant rate time" in {
+      perftestConfiguration.constantRateTime shouldBe (62 minutes)
+    }
+
+    "read the ramp down time" in {
+      perftestConfiguration.rampDownTime shouldBe (21 minute)
+    }
+
+    "read the load percentage" in {
+      perftestConfiguration.loadPercentage shouldBe 2.23
+    }
+    "read the percentage failure threshold" in {
+      perftestConfiguration.percentageFailureThreshold shouldBe 19
+    }
+  }
 
   "PerftestConfiguration" should {
 
