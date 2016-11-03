@@ -119,6 +119,8 @@ perftest {
     hello-world-2
   ],
   labels = "label-A, label-B"   #optional
+  percentageFailureThreshold = 5
+
 }
 
 }
@@ -198,6 +200,8 @@ Contains the name of the service and the port when running locally. Read the ser
 `journeysToRun` contains the journeys that will be executed. Leave it empty if you want to run all the journeys
 
 `labels` optional string containing a comma-separated list of test labels. Read the application.conf file for more details.
+
+`percentageFailureThreshold` optional int. Read the application.conf file for more details.
 
 
 ### License
