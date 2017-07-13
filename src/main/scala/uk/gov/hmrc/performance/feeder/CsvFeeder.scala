@@ -18,18 +18,19 @@ package uk.gov.hmrc.performance.feeder
 
 import java.util.concurrent.atomic.AtomicLong
 
-import io.gatling.core.config.Resource
+import io.gatling.commons.util.RoundRobin
+import io.gatling.commons.validation.{Failure, Success}
+import io.gatling.core.config.GatlingConfiguration
 import io.gatling.core.feeder.{Feeder, Record, SeparatedValuesParser}
-import io.gatling.core.util.RoundRobin
-import io.gatling.core.validation.{Failure, Success}
+import io.gatling.core.util.Resource
 
 import scala.util.Random
 
-class CsvFeeder(feederFile: String) extends Feeder[String] {
+class CsvFeeder(feederFile: String)(implicit configuration: GatlingConfiguration) extends Feeder[String] {
 
   val regularCsvFeeder = {
     Resource.feeder(feederFile) match {
-      case Success(res) => RoundRobin(SeparatedValuesParser.parse(resource = res, separator = ',', doubleQuote = '"', rawSplit = false))
+      case Success(res) => RoundRobin(SeparatedValuesParser.parse(resource = res, columnSeparator = ',', quoteChar = '"', escapeChar = 0))
       case Failure(message) => throw new IllegalArgumentException(s"Could not locate feeder file; $message")
     }
   }

@@ -27,7 +27,7 @@ class PerformanceTestRunnerSpec extends UnitSpec {
   import io.gatling.core.Predef._
   import io.gatling.http.Predef._
 
-  GatlingConfiguration.setUpForTest()
+  configuration = GatlingConfiguration.loadForTest()
 
   class TestRequestsSimulation extends PerformanceTestRunner {
     val foo = http("Get Foo").get(s"/foo")

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.performance.simulation
 
 import io.gatling.core.Predef._
-import io.gatling.core.structure.{PopulatedScenarioBuilder, ScenarioBuilder}
+import io.gatling.core.structure.{PopulationBuilder, ScenarioBuilder}
 import uk.gov.hmrc.performance.conf.{HttpConfiguration, JourneyConfiguration, PerftestConfiguration}
 import uk.gov.hmrc.performance.feeder.CsvFeeder
 
@@ -83,7 +83,7 @@ with PerftestConfiguration {
     case rate => rate
   }
 
-  private def withInjectedLoad(journeys: Seq[Journey]): Seq[PopulatedScenarioBuilder] = journeys.map(scenario => {
+  private def withInjectedLoad(journeys: Seq[Journey]): Seq[PopulationBuilder] = journeys.map(scenario => {
 
     val load = withAtLeasOneRequestInTheFullTest(scenario.load * loadPercentage)
 
@@ -118,7 +118,7 @@ with PerftestConfiguration {
       setUp(withInjectedLoad(journeys): _*)
         .maxDuration(rampUpTime + constantRateTime + rampDownTime + timeoutAtEndOfTest)
         .protocols(httpProtocol)
-        .assertions(global.failedRequests.percent.lessThan(percentageFailureThreshold))
+        .assertions(global.failedRequests.percent.lte(percentageFailureThreshold))
     }
   }
 }

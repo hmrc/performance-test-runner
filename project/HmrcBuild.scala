@@ -12,7 +12,7 @@ object HmrcBuild extends Build {
     "uk.gov.hmrc" %% "hmrctest" % "1.4.0" % "test",
     "org.pegdown" % "pegdown" % "1.5.0" % "test",
 
-    "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.1.7" % "provided"
+    "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.5" % "provided"
   )
 
   lazy val addressModel = Project(nameApp, file("."))

@@ -21,7 +21,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 class CsvFeederSpec extends UnitSpec {
 
-  GatlingConfiguration.setUpForTest()
+  implicit val configuration = GatlingConfiguration.loadForTest()
 
   "The feeder" should {
 

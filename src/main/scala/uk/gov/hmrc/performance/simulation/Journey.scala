@@ -48,7 +48,7 @@ case class JourneyPart(id: String, description: String) {
   }
 
   def toRunIf(sessionKey: Expression[String], value: String): JourneyPart = {
-    conditionallyRun = doIf(sessionKey, value)
+    conditionallyRun = doIfEquals(sessionKey, value)
     this
   }
 }
