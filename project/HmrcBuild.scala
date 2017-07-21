@@ -8,7 +8,7 @@ object HmrcBuild extends Build {
   val nameApp = "performance-test-runner"
 
   val appDependencies = Seq(
-    "uk.gov.hmrc" %% "play-json-logger" % "2.1.0",
+    "uk.gov.hmrc" %% "logback-json-logger" % "3.1.0",
     "uk.gov.hmrc" %% "hmrctest" % "1.4.0" % "test",
     "org.pegdown" % "pegdown" % "1.5.0" % "test",
 
