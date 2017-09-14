@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class PerformanceTestRunnerSpec extends UnitSpec {
   import io.gatling.core.Predef._
   import io.gatling.http.Predef._
 
-  GatlingConfiguration.setUpForTest()
+  configuration = GatlingConfiguration.loadForTest()
 
   class TestRequestsSimulation extends PerformanceTestRunner {
     val foo = http("Get Foo").get(s"/foo")

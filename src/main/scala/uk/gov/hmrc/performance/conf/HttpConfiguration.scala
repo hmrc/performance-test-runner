@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ trait HttpConfiguration extends Configuration {
     .acceptHeader("image/png,image/*;q=0.8,*/*;q=0.5")
     .acceptEncodingHeader("gzip, deflate")
     .acceptLanguageHeader("en-gb,en;q=0.5")
-    .connection("close")
+    .connectionHeader("close")
     .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:25.0) Gecko/20100101 Firefox/25.0")
     .header("True-Client-IP", "${random}")
     .disableFollowRedirect
