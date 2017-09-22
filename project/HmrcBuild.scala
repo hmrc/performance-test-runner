@@ -11,8 +11,8 @@ object HmrcBuild extends Build {
     "uk.gov.hmrc" %% "logback-json-logger" % "3.1.0",
     "uk.gov.hmrc" %% "hmrctest" % "1.4.0" % "test",
     "org.pegdown" % "pegdown" % "1.5.0" % "test",
-
-    "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.5" % "provided"
+    "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.5" % "provided",
+    "com.typesafe.play" %% "play-json" % "2.6.2"
   )
 
   lazy val addressModel = Project(nameApp, file("."))
