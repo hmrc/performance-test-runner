@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package uk.gov.hmrc.performance.conf
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.Tables.Table
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, WordSpec}
 
 import scala.collection.JavaConverters._
 import scala.util.Properties
 
-class JourneyConfigurationSpec extends UnitSpec {
+class JourneyConfigurationSpec extends WordSpec with Matchers {
 
   /*
     hello-world = {

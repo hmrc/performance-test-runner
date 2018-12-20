@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package uk.gov.hmrc.performance.simulation
 
 import io.gatling.core.action.builder.PauseBuilder
 import io.gatling.core.config.GatlingConfiguration
-import uk.gov.hmrc.play.test.UnitSpec
+import org.scalatest.{Matchers, WordSpec}
 
 import scala.concurrent.duration._
 
-class PerformanceTestRunnerSpec extends UnitSpec {
+class PerformanceTestRunnerSpec extends WordSpec with Matchers {
 
   import io.gatling.core.Predef._
   import io.gatling.http.Predef._
