@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,14 @@ class CsvFeederSpec extends WordSpec with Matchers {
       val feeder: CsvFeeder = new CsvFeeder("data/randomFeeder.csv")
       val next: Map[String, String] = feeder.next()
       next("username") shouldBe next("password")
+    }
+
+    "create a custom substitution field per request" in {
+      def substituteVariables(s: String): String = s.replaceAll("""\$\{customGeneratedString\}""", "customoutput")
+      val feeder: CsvFeeder = new CsvFeeder("data/customFeeder.csv", substituteVariables)
+      val next: Map[String, String] = feeder.next()
+      next("username") shouldBe "bob"
+      next("customfield") shouldBe "customoutput"
     }
 
     "replace the random placeholder" in {

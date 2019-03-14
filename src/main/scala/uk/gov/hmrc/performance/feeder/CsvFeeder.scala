@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import io.gatling.core.util.Resource
 
 import scala.util.Random
 
-class CsvFeeder(feederFile: String)(implicit configuration: GatlingConfiguration) extends Feeder[String] {
+class CsvFeeder(feederFile: String, substituteVariables: String => String = identity)(implicit configuration: GatlingConfiguration) extends Feeder[String] {
 
   val regularCsvFeeder = {
     Resource.feeder(feederFile) match {
@@ -81,7 +81,8 @@ class CsvFeeder(feederFile: String)(implicit configuration: GatlingConfiguration
         val vRand: String = v.toString.replaceAll( """\$\{random\}""", randomInt)
         val vTime: String = vRand.toString.replaceAll( """\$\{currentTime\}""", now)
         val vRange: String = replaceRange(vTime)
-        (k, vRange)
+        val additionalSubstitutions = substituteVariables(vRange)
+        (k, additionalSubstitutions)
       }
     }
   }

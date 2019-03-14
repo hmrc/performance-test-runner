@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import uk.gov.hmrc.performance.feeder.CsvFeeder
 import scala.util.Random
 
 
+
 trait PerformanceTestRunner extends Simulation
 with HttpConfiguration
 with JourneyConfiguration
@@ -37,6 +38,12 @@ with PerftestConfiguration {
     parts += part
     part
   }
+
+
+  /**
+    * Allows replacing additional variables in the csv files besides `random` and `currentTime`
+    */
+  protected def substituteVariables(s: String): String = s // keep unchanged by default
 
   private def journeys: Seq[Journey] = {
 
@@ -64,7 +71,7 @@ with PerftestConfiguration {
 
         override lazy val builder: ScenarioBuilder = {
           val scenarioBuilder =
-            if (!feeder.isEmpty) scenario(conf.description).feed(new CsvFeeder(feeder))
+            if (!feeder.isEmpty) scenario(conf.description).feed(new CsvFeeder(feeder, substituteVariables))
             else scenario(conf.description)
           scenarioBuilder
             .feed(Iterator.continually(Map("currentTime" -> System.currentTimeMillis().toString)))
