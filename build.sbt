@@ -12,8 +12,8 @@ lazy val root = (project in file("."))
     majorVersion := 3,
     name := "performance-test-runner",
     makePublicallyAvailableOnBintray := true,
-    scalaVersion := "2.12.8",
-    crossScalaVersions := Seq("2.11.12", "2.12.8"),
+    scalaVersion := "2.12.12",
+    crossScalaVersions := Seq("2.11.12", "2.12.12"),
     libraryDependencies ++= appDependencies,
     libraryDependencies := {
       CrossVersion.partialVersion(scalaVersion.value) match {
