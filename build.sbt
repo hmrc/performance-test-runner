@@ -1,9 +1,3 @@
-import sbt.Keys._
-import sbt._
-import uk.gov.hmrc.versioning.SbtGitVersioning
-
-val libName = "performance-test-runner"
-
 val appDependencies =
   Seq(
     "uk.gov.hmrc"       %% "logback-json-logger"  % "4.2.0",
@@ -12,13 +6,14 @@ val appDependencies =
     "org.pegdown"       %  "pegdown"              % "1.6.0" % Test
   )
 
-lazy val root = Project(libName, file("."))
+lazy val root = (project in file("."))
   .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
   .settings(
     majorVersion := 3,
+    name := "performance-test-runner",
     makePublicallyAvailableOnBintray := true,
-    scalaVersion := "2.11.12",
-    crossScalaVersions := Seq("2.11.12", "2.12.8"),
+    scalaVersion := "2.12.12",
+    crossScalaVersions := Seq("2.11.12", "2.12.12"),
     libraryDependencies ++= appDependencies,
     libraryDependencies := {
       CrossVersion.partialVersion(scalaVersion.value) match {
