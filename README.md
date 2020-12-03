@@ -1,7 +1,7 @@
 
 # performance-test-runner
 
-[![Build Status](https://travis-ci.org/hmrc/performance-test-runner.svg?branch=master)](https://travis-ci.org/hmrc/performance-test-runner) [ ![Download](https://api.bintray.com/packages/hmrc/releases/performance-test-runner/images/download.svg) ](https://bintray.com/hmrc/releases/performance-test-runner/_latestVersion)
+
 
 
 This is a wrapper around the [Gatling](http://gatling.io/) load testing framework, 
