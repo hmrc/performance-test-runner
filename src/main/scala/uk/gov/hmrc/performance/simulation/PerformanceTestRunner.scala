@@ -105,7 +105,7 @@ with PerftestConfiguration {
 
     if (runSingleUserJourney) {
 
-      println(s"'perfetest.runSmokeTest' is set to true, ignoring all loads and running with only one user per journey!")
+      println(s"'perftest.runSmokeTest' is set to true, ignoring all loads and running with only one user per journey!")
 
       val injectedBuilders = journeys.map(scenario => {
         scenario.builder.inject(atOnceUsers(1))
@@ -119,6 +119,7 @@ with PerftestConfiguration {
         .maxDuration(rampUpTime + constantRateTime + rampDownTime + timeoutAtEndOfTest)
         .protocols(httpProtocol)
         .assertions(global.failedRequests.percent.lte(percentageFailureThreshold))
+        .assertions(forAll.failedRequests.percent.lte(requestPercentageFailureThreshold))
     }
   }
 }
