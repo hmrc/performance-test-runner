@@ -1,11 +1,3 @@
-val appDependencies =
-  Seq(
-    "uk.gov.hmrc"       %% "logback-json-logger"  % "4.2.0",
-    "com.typesafe.play" %% "play-json"            % "2.6.10",
-    "org.scalatest"     %% "scalatest"            % "3.0.5" % Test,
-    "org.pegdown"       %  "pegdown"              % "1.6.0" % Test
-  )
-
 lazy val root = (project in file("."))
   .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
   .settings(
@@ -14,7 +6,7 @@ lazy val root = (project in file("."))
     makePublicallyAvailableOnBintray := true,
     scalaVersion := "2.12.12",
     crossScalaVersions := Seq("2.11.12", "2.12.12"),
-    libraryDependencies ++= appDependencies,
+    libraryDependencies ++= Dependencies.compile ++ Dependencies.test,
     libraryDependencies := {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, scalaMajor)) if scalaMajor == 12 =>
@@ -28,9 +20,5 @@ lazy val root = (project in file("."))
         case _ =>
           libraryDependencies.value
       }
-    },
-    resolvers := Seq(
-      Resolver.bintrayRepo("hmrc", "releases"),
-      Resolver.typesafeRepo("releases")
-    )
+    }
   )
