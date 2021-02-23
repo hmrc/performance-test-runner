@@ -45,13 +45,12 @@ class PerftestConfigurationSpec extends WordSpec with Matchers {
     }
 
     "read the load percentage" in {
-      perftestConfiguration.loadPercentage shouldBe 1D
+      perftestConfiguration.loadPercentage shouldBe 1d
     }
     "read the percentage failure threshold" in {
       perftestConfiguration.percentageFailureThreshold shouldBe 1
     }
   }
-
 
   "TestRateConfiguration via provided test config file" should {
 
@@ -59,15 +58,17 @@ class PerftestConfigurationSpec extends WordSpec with Matchers {
 
       import collection.JavaConverters._
 
-      override lazy val applicationConfig: Config = ConfigFactory.parseMap(Map(
-        "perftest.rampupTime" -> 123,
-        "perftest.constantRateTime" -> 62,
-        "perftest.rampdownTime" -> 21,
-        "perftest.loadPercentage" -> 223,
-        "perftest.runSmokeTest" -> false,
-        "perftest.labels" -> "W, Z",
-        "perftest.percentageFailureThreshold" -> 19
-      ).asJava)
+      override lazy val applicationConfig: Config = ConfigFactory.parseMap(
+        Map(
+          "perftest.rampupTime"                 -> 123,
+          "perftest.constantRateTime"           -> 62,
+          "perftest.rampdownTime"               -> 21,
+          "perftest.loadPercentage"             -> 223,
+          "perftest.runSmokeTest"               -> false,
+          "perftest.labels"                     -> "W, Z",
+          "perftest.percentageFailureThreshold" -> 19
+        ).asJava
+      )
     }
 
     "read the ramp up time from the config file" in {
@@ -102,7 +103,6 @@ class PerftestConfigurationSpec extends WordSpec with Matchers {
     )
 
     forAll(scenarios) { (scenario: String, labelsValue: Option[String], expectedValue: Set[String]) =>
-
       s"read test labels as list of string - scenario: $scenario" in {
 
         labelsValue.foreach(value => Properties.setProp("perftest.labels", value))

@@ -22,8 +22,9 @@ import io.gatling.http.Predef._
 trait HttpConfiguration extends Configuration {
 
   val headers = Map(
-    """Accept""" -> """text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8""",
-    """Cache-Control""" -> """no-cache""")
+    """Accept"""        -> """text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8""",
+    """Cache-Control""" -> """no-cache"""
+  )
 
   val httpProtocol = http
     .acceptHeader("image/png,image/*;q=0.8,*/*;q=0.5")

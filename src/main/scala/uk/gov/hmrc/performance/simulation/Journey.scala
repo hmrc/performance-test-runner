@@ -30,8 +30,8 @@ trait Journey {
 
 case class JourneyPart(id: String, description: String) {
 
-  val ab = scala.collection.mutable.MutableList[ActionBuilder]()
-  var conditionallyRun: ChainBuilder => ChainBuilder = (cb) => cb
+  val ab                                             = scala.collection.mutable.MutableList[ActionBuilder]()
+  var conditionallyRun: ChainBuilder => ChainBuilder = cb => cb
 
   def builder: ChainBuilder =
     if (ab.isEmpty) throw new scala.IllegalArgumentException(s"'$id' must have at least one request")

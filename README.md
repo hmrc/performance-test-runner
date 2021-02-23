@@ -203,6 +203,23 @@ Contains the name of the service and the port when running locally. Read the ser
 
 `percentageFailureThreshold` optional int. Read the application.conf file for more details.
 
+## Scalafmt
+This repository uses [Scalafmt](https://scalameta.org/scalafmt/), a code formatter for Scala. The formatting rules configured for this repository are defined within [.scalafmt.conf](.scalafmt.conf).
+
+To apply formatting to this repository using the configured rules in [.scalafmt.conf](.scalafmt.conf) execute:
+
+ ```
+ sbt scalafmtAll scalafmtSbt
+ ```
+
+To check files have been formatted as expected execute:
+
+ ```
+ sbt scalafmtCheckAll scalafmtSbtCheck
+ ```
+
+[Visit the official Scalafmt documentation to view a complete list of tasks which can be run.](https://scalameta.org/scalafmt/docs/installation.html#task-keys)
+
 
 ### License
 
