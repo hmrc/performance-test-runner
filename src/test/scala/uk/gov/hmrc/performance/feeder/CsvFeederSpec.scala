@@ -26,26 +26,26 @@ class CsvFeederSpec extends WordSpec with Matchers {
   "The feeder" should {
 
     "return values by key" in {
-      val feeder: CsvFeeder = new CsvFeeder("data/helloworld.csv")
+      val feeder: CsvFeeder         = new CsvFeeder("data/helloworld.csv")
       val next: Map[String, String] = feeder.next()
       next("username") shouldBe "bob"
       next("password") shouldBe "12345678"
     }
 
     "create only one random per request" in {
-      val feeder: CsvFeeder = new CsvFeeder("data/randomFeeder.csv")
+      val feeder: CsvFeeder         = new CsvFeeder("data/randomFeeder.csv")
       val next: Map[String, String] = feeder.next()
       next("username") shouldBe next("password")
     }
 
     "replace the random placeholder" in {
-      val feeder: CsvFeeder = new CsvFeeder("data/helloworld.csv")
+      val feeder: CsvFeeder         = new CsvFeeder("data/helloworld.csv")
       val next: Map[String, String] = feeder.next()
       next("email") matches "^[0-9]*@somemail.com"
     }
 
     "replace the currentTime placeholder" in {
-      val feeder: CsvFeeder = new CsvFeeder("data/helloworld.csv")
+      val feeder: CsvFeeder         = new CsvFeeder("data/helloworld.csv")
       val next: Map[String, String] = feeder.next()
       next("time") matches "^[0-9]*"
     }
@@ -59,14 +59,14 @@ class CsvFeederSpec extends WordSpec with Matchers {
 
   "the range" should {
     "be reused in the same journey" in {
-      val feeder: CsvFeeder = new CsvFeeder("data/range.csv")
+      val feeder: CsvFeeder         = new CsvFeeder("data/range.csv")
       val next: Map[String, String] = feeder.next()
       next("username") shouldBe "bob-000001"
       next("password") shouldBe "000001"
     }
 
     "should work in the middle of a string" in {
-      val feeder: CsvFeeder = new CsvFeeder("data/range.csv")
+      val feeder: CsvFeeder         = new CsvFeeder("data/range.csv")
       val next: Map[String, String] = feeder.next()
       next("withRangeInTheMiddle") shouldBe "90000019"
     }
@@ -98,7 +98,7 @@ class CsvFeederSpec extends WordSpec with Matchers {
       feeder.next()("other") shouldBe "9"
 
       val next: Map[String, String] = feeder.next()
-      next("other") shouldBe "1"
+      next("other")    shouldBe "1"
       next("password") shouldBe "000010"
     }
   }

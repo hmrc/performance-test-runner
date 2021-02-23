@@ -11,13 +11,13 @@ lazy val root = (project in file("."))
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, scalaMajor)) if scalaMajor == 12 =>
           libraryDependencies.value ++ Seq(
-            "io.gatling.highcharts"  %  "gatling-charts-highcharts" % "2.3.1" % "provided"
+            "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.3.1" % "provided"
           )
         case Some((2, scalaMajor)) if scalaMajor == 11 =>
           libraryDependencies.value ++ Seq(
-            "io.gatling.highcharts"  %  "gatling-charts-highcharts" % "2.2.5" % "provided"
+            "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.5" % "provided"
           )
-        case _ =>
+        case _                                         =>
           libraryDependencies.value
       }
     }

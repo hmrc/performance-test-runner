@@ -33,15 +33,15 @@ class PerformanceTestRunnerSpec extends WordSpec with Matchers {
     val foo = http("Get Foo").get(s"/foo")
     val bar = http("Get Bar").get(s"/bar")
 
-    setup("some-id-1", "Some Description 1") withRequests(foo, bar)
-    setup("some-id-2", "Some Description 2") withRequests bar toRunIf("", "")
+    setup("some-id-1", "Some Description 1") withRequests (foo, bar)
+    setup("some-id-2", "Some Description 2") withRequests bar toRunIf ("", "")
   }
 
   class TestActionsSimulation extends PerformanceTestRunner {
-    val foo = http("Get Foo").get(s"/foo")
+    val foo   = http("Get Foo").get(s"/foo")
     val pause = new PauseBuilder(1 milliseconds, None)
 
-    setup("some-id-1", "Some Description 1") withActions(foo, pause)
+    setup("some-id-1", "Some Description 1") withActions (foo, pause)
   }
 
   class MalformedTestSimulation extends PerformanceTestRunner {
@@ -54,12 +54,12 @@ class PerformanceTestRunnerSpec extends WordSpec with Matchers {
 
       simulation.parts.size shouldBe 2
 
-      simulation.parts.head.id shouldBe "some-id-1"
-      simulation.parts.head.description shouldBe "Some Description 1"
+      simulation.parts.head.id                          shouldBe "some-id-1"
+      simulation.parts.head.description                 shouldBe "Some Description 1"
       simulation.parts.head.builder.actionBuilders.size shouldBe 2
 
-      simulation.parts(1).id shouldBe "some-id-2"
-      simulation.parts(1).description shouldBe "Some Description 2"
+      simulation.parts(1).id                          shouldBe "some-id-2"
+      simulation.parts(1).description                 shouldBe "Some Description 2"
       simulation.parts(1).builder.actionBuilders.size shouldBe 1
 
     }
@@ -69,8 +69,8 @@ class PerformanceTestRunnerSpec extends WordSpec with Matchers {
 
       simulation.parts.size shouldBe 1
 
-      simulation.parts.head.id shouldBe "some-id-1"
-      simulation.parts.head.description shouldBe "Some Description 1"
+      simulation.parts.head.id                          shouldBe "some-id-1"
+      simulation.parts.head.description                 shouldBe "Some Description 1"
       simulation.parts.head.builder.actionBuilders.size shouldBe 2
     }
 

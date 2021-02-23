@@ -43,27 +43,31 @@ class JourneyConfigurationSpec extends WordSpec with Matchers {
     "be able to read a well formed journey.conf file" in {
       val configUnderTest = new JourneyConfiguration {}
 
-      configUnderTest.definitions() should contain(JourneyDefinition(
-        id = "hello-world-1",
-        description = "Hello world journey 1",
-        load = 9.1,
-        parts = List("login", "home"),
-        feeder = "data/helloworld.csv",
-        runIf = Set.empty
-      ))
+      configUnderTest.definitions() should contain(
+        JourneyDefinition(
+          id = "hello-world-1",
+          description = "Hello world journey 1",
+          load = 9.1,
+          parts = List("login", "home"),
+          feeder = "data/helloworld.csv",
+          runIf = Set.empty
+        )
+      )
     }
 
     "filter the definitions using test labels set if this is not empty" in {
       val configUnderTest = new JourneyConfiguration {}
 
-      configUnderTest.definitions(Set("label-A")) shouldBe Seq(JourneyDefinition(
-        id = "hello-world-1",
-        description = "Hello world journey 1",
-        load = 9.1,
-        parts = List("login", "home"),
-        feeder = "data/helloworld.csv",
-        runIf = Set.empty
-      ))
+      configUnderTest.definitions(Set("label-A")) shouldBe Seq(
+        JourneyDefinition(
+          id = "hello-world-1",
+          description = "Hello world journey 1",
+          load = 9.1,
+          parts = List("login", "home"),
+          feeder = "data/helloworld.csv",
+          runIf = Set.empty
+        )
+      )
     }
 
     "be able to return only journeys set in the application.config file" in {
@@ -73,14 +77,16 @@ class JourneyConfigurationSpec extends WordSpec with Matchers {
       ConfigFactory.invalidateCaches()
       val configUnderTest = new JourneyConfiguration {}
 
-      configUnderTest.definitions() should contain theSameElementsAs Seq(JourneyDefinition(
-        id = "hello-world-1",
-        description = "Hello world journey 1",
-        load = 9.1,
-        parts = List("login", "home"),
-        feeder = "data/helloworld.csv",
-        runIf = Set.empty
-      ))
+      configUnderTest.definitions() should contain theSameElementsAs Seq(
+        JourneyDefinition(
+          id = "hello-world-1",
+          description = "Hello world journey 1",
+          load = 9.1,
+          parts = List("login", "home"),
+          feeder = "data/helloworld.csv",
+          runIf = Set.empty
+        )
+      )
 
       Properties.clearProp("journeysToRun.0")
       Properties.clearProp("journeysToRun.1")
@@ -91,12 +97,18 @@ class JourneyConfigurationSpec extends WordSpec with Matchers {
 
       val thrown = intercept[RuntimeException] {
         val configUnderTest = new JourneyConfiguration {
-          override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, String](
-            "journeys.test-abstract-journey.abstract" -> "true",
-            "journeys.test-abstract-journey.extends" -> "base-journey",
-            "journeys.test-abstract-journey.load" -> "6",
-            "journeys.test-journey.extends" -> "test-abstract-journey"
-          ).asJava))
+          override lazy val applicationConfig: Config = ConfigFactory
+            .load("journeys")
+            .withFallback(
+              ConfigFactory.parseMap(
+                Map[String, String](
+                  "journeys.test-abstract-journey.abstract" -> "true",
+                  "journeys.test-abstract-journey.extends"  -> "base-journey",
+                  "journeys.test-abstract-journey.load"     -> "6",
+                  "journeys.test-journey.extends"           -> "test-abstract-journey"
+                ).asJava
+              )
+            )
         }
         configUnderTest.definitions()
       }
@@ -107,9 +119,15 @@ class JourneyConfigurationSpec extends WordSpec with Matchers {
 
       val thrown = intercept[RuntimeException] {
         val configUnderTest = new JourneyConfiguration {
-          override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, String](
-            "journeys.test-journey.extends" -> "hello-world-1"
-          ).asJava))
+          override lazy val applicationConfig: Config = ConfigFactory
+            .load("journeys")
+            .withFallback(
+              ConfigFactory.parseMap(
+                Map[String, String](
+                  "journeys.test-journey.extends" -> "hello-world-1"
+                ).asJava
+              )
+            )
         }
         configUnderTest.definitions()
       }
@@ -120,10 +138,16 @@ class JourneyConfigurationSpec extends WordSpec with Matchers {
 
       val thrown = intercept[RuntimeException] {
         val configUnderTest = new JourneyConfiguration {
-          override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, String](
-            "journeys.test-journey.extends" -> "hello-world-1",
-            "journeys.hello-world-1.abstract" -> "false"
-          ).asJava))
+          override lazy val applicationConfig: Config = ConfigFactory
+            .load("journeys")
+            .withFallback(
+              ConfigFactory.parseMap(
+                Map[String, String](
+                  "journeys.test-journey.extends"   -> "hello-world-1",
+                  "journeys.hello-world-1.abstract" -> "false"
+                ).asJava
+              )
+            )
         }
         configUnderTest.definitions()
       }
@@ -134,9 +158,15 @@ class JourneyConfigurationSpec extends WordSpec with Matchers {
 
       val thrown = intercept[RuntimeException] {
         val configUnderTest = new JourneyConfiguration {
-          override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, String](
-            "journeys.test-journey.extends" -> "missing-journey"
-          ).asJava))
+          override lazy val applicationConfig: Config = ConfigFactory
+            .load("journeys")
+            .withFallback(
+              ConfigFactory.parseMap(
+                Map[String, String](
+                  "journeys.test-journey.extends" -> "missing-journey"
+                ).asJava
+              )
+            )
         }
         configUnderTest.definitions()
       }
@@ -146,20 +176,24 @@ class JourneyConfigurationSpec extends WordSpec with Matchers {
     "the feeder defined in the non-abstract journey should override the one defined in the abstract one" in {
 
       val configUnderTest = new JourneyConfiguration {
-        override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, AnyRef](
-
-            "journeys.abstract-journey.abstract" -> "true",
-            "journeys.abstract-journey.description" -> "Some Journey",
-            "journeys.abstract-journey.feeder" -> "data/helloworld.csv",
-            "journeys.abstract-journey.parts" -> Set("login", "home").asJava,
-
-            "journeys.test-journey.extends" -> "abstract-journey",
-            "journeys.test-journey.load" -> "1",
-            "journeys.test-journey.feeder" -> "data/feed-1.csv"
-          ).asJava))
+        override lazy val applicationConfig: Config = ConfigFactory
+          .load("journeys")
+          .withFallback(
+            ConfigFactory.parseMap(
+              Map[String, AnyRef](
+                "journeys.abstract-journey.abstract"    -> "true",
+                "journeys.abstract-journey.description" -> "Some Journey",
+                "journeys.abstract-journey.feeder"      -> "data/helloworld.csv",
+                "journeys.abstract-journey.parts"       -> Set("login", "home").asJava,
+                "journeys.test-journey.extends"         -> "abstract-journey",
+                "journeys.test-journey.load"            -> "1",
+                "journeys.test-journey.feeder"          -> "data/feed-1.csv"
+              ).asJava
+            )
+          )
       }
-      val journey = configUnderTest.definitions().find(_.description == "Some Journey")
-      journey.isDefined shouldBe true
+      val journey         = configUnderTest.definitions().find(_.description == "Some Journey")
+      journey.isDefined  shouldBe true
       journey.get.feeder shouldBe "data/feed-1.csv"
 
     }
@@ -167,42 +201,61 @@ class JourneyConfigurationSpec extends WordSpec with Matchers {
     val scenarios = Table(
       ("scenario", "id", "expectedDescription", "expectedLoad", "expectedRunIf", "expectedSkipIf"),
       ("with no runIf/skipIf", "test-journey-4", "Base journey", 8, Set.empty[String], Set.empty[String]),
-      ("with both runIf and skipIf", "test-journey-1", "Base journey - runIf [label-1] and skipIf [label-2,label-3]", 5, Set("label-1"), Set("label-2", "label-3")),
-      ("with skipIf only", "test-journey-2", "Base journey - skipIf [label-2,label-3]", 6, Set.empty[String], Set("label-2", "label-3")),
+      (
+        "with both runIf and skipIf",
+        "test-journey-1",
+        "Base journey - runIf [label-1] and skipIf [label-2,label-3]",
+        5,
+        Set("label-1"),
+        Set("label-2", "label-3")
+      ),
+      (
+        "with skipIf only",
+        "test-journey-2",
+        "Base journey - skipIf [label-2,label-3]",
+        6,
+        Set.empty[String],
+        Set("label-2", "label-3")
+      ),
       ("with runIf only", "test-journey-3", "Base journey - runIf [label-1]", 7, Set("label-1"), Set.empty[String])
     )
 
     forAll(scenarios) { (scenario, id, expectedDescription, expectedLoad, expectedRunIf, expectedSkipIf) =>
       s"a journey can extend an abstract one - $scenario" in {
         val configUnderTest = new JourneyConfiguration {
-          override lazy val applicationConfig: Config = ConfigFactory.load("journeys").withFallback(ConfigFactory.parseMap(Map[String, AnyRef](
-            "journeys.test-journey-1.extends" -> "base-journey",
-            "journeys.test-journey-1.load" -> "5",
-            "journeys.test-journey-1.run-if" -> Set("label-1").asJava,
-            "journeys.test-journey-1.skip-if" -> Set("label-2", "label-3").asJava,
-
-            "journeys.test-journey-2.extends" -> "base-journey",
-            "journeys.test-journey-2.load" -> "6",
-            "journeys.test-journey-2.skip-if" -> Set("label-2", "label-3").asJava,
-
-            "journeys.test-journey-3.extends" -> "base-journey",
-            "journeys.test-journey-3.load" -> "7",
-            "journeys.test-journey-3.run-if" -> Set("label-1").asJava,
-
-            "journeys.test-journey-4.extends" -> "base-journey",
-            "journeys.test-journey-4.load" -> "8"
-          ).asJava))
+          override lazy val applicationConfig: Config = ConfigFactory
+            .load("journeys")
+            .withFallback(
+              ConfigFactory.parseMap(
+                Map[String, AnyRef](
+                  "journeys.test-journey-1.extends" -> "base-journey",
+                  "journeys.test-journey-1.load"    -> "5",
+                  "journeys.test-journey-1.run-if"  -> Set("label-1").asJava,
+                  "journeys.test-journey-1.skip-if" -> Set("label-2", "label-3").asJava,
+                  "journeys.test-journey-2.extends" -> "base-journey",
+                  "journeys.test-journey-2.load"    -> "6",
+                  "journeys.test-journey-2.skip-if" -> Set("label-2", "label-3").asJava,
+                  "journeys.test-journey-3.extends" -> "base-journey",
+                  "journeys.test-journey-3.load"    -> "7",
+                  "journeys.test-journey-3.run-if"  -> Set("label-1").asJava,
+                  "journeys.test-journey-4.extends" -> "base-journey",
+                  "journeys.test-journey-4.load"    -> "8"
+                ).asJava
+              )
+            )
         }
 
-        configUnderTest.definitions(Set("label-1")) should contain(JourneyDefinition(
-          id = id,
-          description = expectedDescription,
-          load = expectedLoad,
-          parts = List("login", "home"),
-          feeder = "data/helloworld.csv",
-          runIf = expectedRunIf,
-          skipIf = expectedSkipIf
-        ))
+        configUnderTest.definitions(Set("label-1")) should contain(
+          JourneyDefinition(
+            id = id,
+            description = expectedDescription,
+            load = expectedLoad,
+            parts = List("login", "home"),
+            feeder = "data/helloworld.csv",
+            runIf = expectedRunIf,
+            skipIf = expectedSkipIf
+          )
+        )
       }
     }
   }
@@ -212,25 +265,43 @@ class JourneyConfigurationSpec extends WordSpec with Matchers {
     val scenarios = Table(
       ("scenario", "runIf", "skipIf", "testLabels", "expectedResult"),
       ("runIf, shouldIf and testLabels empty", Set.empty[String], Set.empty[String], Set.empty[String], true),
-      ("runIf and shouldIf empty, testLabels non-empty", Set.empty[String], Set.empty[String], Set[String]("A", "B"), true),
+      (
+        "runIf and shouldIf empty, testLabels non-empty",
+        Set.empty[String],
+        Set.empty[String],
+        Set[String]("A", "B"),
+        true
+      ),
       ("intersecting runIf and skipIf empty", Set[String]("A", "C"), Set.empty[String], Set[String]("A", "B"), false),
-      ("runIf subset of test labels and skipIf empty", Set[String]("A", "C"), Set.empty[String], Set[String]("A", "B", "C"), true),
+      (
+        "runIf subset of test labels and skipIf empty",
+        Set[String]("A", "C"),
+        Set.empty[String],
+        Set[String]("A", "B", "C"),
+        true
+      ),
       ("intersecting skipIf and runIf empty", Set.empty[String], Set[String]("A", "C"), Set[String]("A", "B"), false),
       ("non-matching runIf and matching skipIf", Set[String]("C", "D"), Set[String]("B"), Set[String]("A", "B"), false),
-      ("runIf non-empty, shouldIf empty and testLabels empty", Set[String]("A", "B"), Set.empty[String], Set.empty[String], false)
+      (
+        "runIf non-empty, shouldIf empty and testLabels empty",
+        Set[String]("A", "B"),
+        Set.empty[String],
+        Set.empty[String],
+        false
+      )
     )
 
-    forAll(scenarios) { (scenario: String, runIf: Set[String], skipIf: Set[String], testLabels: Set[String], expectedResult: Boolean) =>
-
-      s"return whether it should be executed - scenario: $scenario" in {
-        val journeyDefinition = JourneyDefinition("id", "desc", 0, List.empty, "feeder", runIf, skipIf)
-        journeyDefinition.shouldRun(testLabels) shouldBe expectedResult
-      }
+    forAll(scenarios) {
+      (scenario: String, runIf: Set[String], skipIf: Set[String], testLabels: Set[String], expectedResult: Boolean) =>
+        s"return whether it should be executed - scenario: $scenario" in {
+          val journeyDefinition = JourneyDefinition("id", "desc", 0, List.empty, "feeder", runIf, skipIf)
+          journeyDefinition.shouldRun(testLabels) shouldBe expectedResult
+        }
     }
 
     "throw an exception when runIf and skipIf are overlapping" in {
       val journeyDefinition = JourneyDefinition("id", "desc", 0, List.empty, "feeder", Set("A", "B"), Set("B", "C"))
-      val thrown = intercept[RuntimeException] {
+      val thrown            = intercept[RuntimeException] {
         journeyDefinition.shouldRun(Set.empty)
       }
       thrown.getMessage shouldBe "Invalid configuration for journey with id=id. 'run-if' and 'skip-if' can't overlap"

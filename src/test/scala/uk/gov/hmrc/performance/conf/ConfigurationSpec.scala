@@ -23,7 +23,6 @@ import scala.util.Properties
 
 class ConfigurationSpec extends WordSpec with Matchers {
 
-
   "Configuration" should {
 
     "read runLocal default value" in {
@@ -37,7 +36,6 @@ class ConfigurationSpec extends WordSpec with Matchers {
       val configUnderTest = new Configuration {}
       configUnderTest.readProperty("baseUrl") shouldBe "http://helloworld-service.co.uk"
     }
-
 
     "give priority to environment variables" in {
 
@@ -72,9 +70,9 @@ class ConfigurationSpec extends WordSpec with Matchers {
     "read list of keys" in {
 
       val configUnderTest = new Configuration {}
-      configUnderTest.keys("journeys") should contain ("hello-world-1")
-      configUnderTest.keys("journeys") should contain ("hello-world-2")
-      configUnderTest.keys("journeys") should contain ("hello-world-3")
+      configUnderTest.keys("journeys") should contain("hello-world-1")
+      configUnderTest.keys("journeys") should contain("hello-world-2")
+      configUnderTest.keys("journeys") should contain("hello-world-3")
     }
 
     "throw an exception if the key is not found" in {
@@ -91,7 +89,7 @@ class ConfigurationSpec extends WordSpec with Matchers {
 
     "read a property as set of string" in {
       val configUnderTest = new Configuration {}
-      configUnderTest.readPropertySet("journeys.hello-world-3.run-if") shouldBe Set("label-B")
+      configUnderTest.readPropertySet("journeys.hello-world-3.run-if")        shouldBe Set("label-B")
       configUnderTest.readPropertySetOrEmpty("journeys.hello-world-3.run-if") shouldBe Set("label-B")
       configUnderTest.readPropertySetOrEmpty("journeys.hello-world-1.run-if") shouldBe Set.empty
     }
