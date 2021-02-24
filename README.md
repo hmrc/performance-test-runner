@@ -167,7 +167,7 @@ sbt -Djava.io.tmpdir=${WORKSPACE}/tmp test
 
 
 ### More about setting up the simulation 
-### Using a pause 
+#### Using a pause 
 
 ```scala
 import io.gatling.core.action.builder.PauseBuilder
@@ -185,8 +185,6 @@ class HelloWorldSimulation extends ConfigurationDrivenSimulations {
   runSimulation()
 }
 ```
-
-
 
 ### More about the journey configuration.
 
