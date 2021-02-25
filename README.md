@@ -165,6 +165,27 @@ To run the full performance test execute
 sbt -Djava.io.tmpdir=${WORKSPACE}/tmp test
 ```
 
+
+### More about setting up the simulation 
+#### Using a pause 
+
+```scala
+import io.gatling.core.action.builder.PauseBuilder
+import uk.gov.hmrc.performance.simulation.ConfigurationDrivenSimulations
+import HelloWorldRequests._
+
+import scala.concurrent.duration._
+
+class HelloWorldSimulation extends ConfigurationDrivenSimulations {
+  
+  val pause = new PauseBuilder(1 milliseconds, None)
+  
+  setup("login", "Login") withActions(navigateToLoginPage, pause, submitLogin)
+
+  runSimulation()
+}
+```
+
 ### More about the journey configuration.
 
 `description` will be assigned to the journey in the test report
