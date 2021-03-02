@@ -16,22 +16,64 @@
 
 package uk.gov.hmrc.performance.feeder
 
-import java.util.concurrent.atomic.AtomicLong
-
-import io.gatling.commons.util.RoundRobin
+import io.gatling.commons.util.CircularIterator
+import io.gatling.commons.util.Io.withCloseable
 import io.gatling.commons.validation.{Failure, Success}
-import io.gatling.core.config.GatlingConfiguration
+import io.gatling.core.config.{GatlingConfiguration, GatlingFiles}
 import io.gatling.core.feeder.{Feeder, Record, SeparatedValuesParser}
-import io.gatling.core.util.Resource
+import io.gatling.core.util.ResourceCache
 
+import java.nio.channels.FileChannel
+import java.util.concurrent.atomic.AtomicLong
 import scala.util.Random
 
-class CsvFeeder(feederFile: String)(implicit configuration: GatlingConfiguration) extends Feeder[String] {
+/** Implements Gatling's Feeder to feed test data from a CSV file. The CSV records are available in Gatling's session
+  * for use during the test.
+  *
+  * Example:
+  * {{{
+  * username,password
+  * bob,12345678
+  * alice,87654321}}}
+  *
+  * The provided CSV can also contain placeholders to generate dynamic data from a single record.
+  *
+  * Example with random placeholder:
+  * {{{
+  * username,password
+  * my-${random}-user,12345678}}}
+  *
+  * In the above CSV, `${random}` is replaced with a random int value
+  *
+  * Other available placeholders:
+  *
+  * ${currentTime} - replaced with the current time in milliseconds
+  *
+  * ${range-X} - replaced by a string representation of number made of X digits.
+  *
+  * The number is incremental and starts from 1 again when it reaches the max value.
+  * For example ${range-3} will be replaced with '001' the first time, '002' the next and so on.
+  *
+  * @constructor creates a new feeder from a CSV file
+  * @param feederFile name of the feeder file with directory. Example: data/helloworld.csv.
+  * @param configuration GatlingConfiguration provided implicitly
+  */
 
-  val regularCsvFeeder = {
-    Resource.feeder(feederFile) match {
+class CsvFeeder(feederFile: String)(implicit configuration: GatlingConfiguration)
+    extends Feeder[String]
+    with ResourceCache {
+
+  val regularCsvFeeder: Iterator[Record[String]] = {
+    cachedResource(GatlingFiles.resourcesDirectory(configuration), feederFile) match {
       case Success(res)     =>
-        RoundRobin(SeparatedValuesParser.parse(resource = res, columnSeparator = ',', quoteChar = '"', escapeChar = 0))
+        withCloseable(FileChannel.open(res.file.toPath)) { channel =>
+          CircularIterator(
+            SeparatedValuesParser
+              .stream(columnSeparator = ',', quoteChar = '"', charset = configuration.core.charset)(channel)
+              .toVector,
+            threadSafe = true
+          )
+        }
       case Failure(message) => throw new IllegalArgumentException(s"Could not locate feeder file; $message")
     }
   }

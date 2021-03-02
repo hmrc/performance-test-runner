@@ -17,40 +17,38 @@
 package uk.gov.hmrc.performance.simulation
 
 import io.gatling.core.action.builder.PauseBuilder
-import io.gatling.core.config.GatlingConfiguration
+import io.gatling.http.request.builder.HttpRequestBuilder
 import org.scalatest.{Matchers, WordSpec}
 
 import scala.concurrent.duration._
 
-class PerformanceTestRunnerSpec extends WordSpec with Matchers {
+class JourneySetupSpec extends WordSpec with Matchers {
 
   import io.gatling.core.Predef._
   import io.gatling.http.Predef._
 
-  configuration = GatlingConfiguration.loadForTest()
-
-  class TestRequestsSimulation extends PerformanceTestRunner {
-    val foo = http("Get Foo").get(s"/foo")
-    val bar = http("Get Bar").get(s"/bar")
+  class TestRequestsSetup extends JourneySetup {
+    val foo: HttpRequestBuilder = http("Get Foo").get(s"/foo")
+    val bar: HttpRequestBuilder = http("Get Bar").get(s"/bar")
 
     setup("some-id-1", "Some Description 1") withRequests (foo, bar)
     setup("some-id-2", "Some Description 2") withRequests bar toRunIf ("", "")
   }
 
-  class TestActionsSimulation extends PerformanceTestRunner {
-    val foo   = http("Get Foo").get(s"/foo")
-    val pause = new PauseBuilder(1 milliseconds, None)
+  class TestActionsSetup extends JourneySetup {
+    val foo: HttpRequestBuilder = http("Get Foo").get(s"/foo")
+    val pause                   = new PauseBuilder(1 milliseconds, None)
 
     setup("some-id-1", "Some Description 1") withActions (foo, pause)
   }
 
-  class MalformedTestSimulation extends PerformanceTestRunner {
+  class MalformedTestSetup extends JourneySetup {
     setup("some-id-1", "Some Description 1")
   }
 
   "The simulation" should {
     "create some parts from http requests" in {
-      val simulation: TestRequestsSimulation = new TestRequestsSimulation()
+      val simulation: TestRequestsSetup = new TestRequestsSetup()
 
       simulation.parts.size shouldBe 2
 
@@ -65,7 +63,7 @@ class PerformanceTestRunnerSpec extends WordSpec with Matchers {
     }
 
     "create some parts from general actions" in {
-      val simulation: TestActionsSimulation = new TestActionsSimulation()
+      val simulation: TestActionsSetup = new TestActionsSetup()
 
       simulation.parts.size shouldBe 1
 
@@ -76,7 +74,7 @@ class PerformanceTestRunnerSpec extends WordSpec with Matchers {
 
     "Throw an exception if the journey part has no requests" in {
       val thrown = intercept[IllegalArgumentException] {
-        new MalformedTestSimulation().parts.head.builder
+        new MalformedTestSetup().parts.head.builder
       }
       thrown.getMessage shouldBe "'some-id-1' must have at least one request"
     }

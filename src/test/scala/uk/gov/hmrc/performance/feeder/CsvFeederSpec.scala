@@ -101,5 +101,12 @@ class CsvFeederSpec extends WordSpec with Matchers {
       next("other")    shouldBe "1"
       next("password") shouldBe "000010"
     }
+
+    "Throw an exception if the feeder file is not found" in {
+      val thrown = intercept[IllegalArgumentException] {
+        new CsvFeeder("data/notAvailable.csv")
+      }
+      thrown.getMessage shouldBe "Could not locate feeder file; Resource data/notAvailable.csv not found"
+    }
   }
 }

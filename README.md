@@ -5,17 +5,33 @@
 
 
 This is a wrapper around the [Gatling](http://gatling.io/) load testing framework, 
-with pre configured injection steps, protocols and assertions.
+with preconfigured injection steps, protocols and assertions.
 
 
-### Adding to your build
+### Adding to your performance test
 
-In your SBT build add:
+#### Compatible versions
+
+Library Version | Scala Version | gatling-version*          | gatling-sbt plugin
+--------------- | ------------- | ------------------------- | ------------------ 
+4.x.x           | 2.12          | 3.4.2                     | 3.2.1
+3.x.x           | 2.11, 2.12    | 2.2.5, 2.3.1              | 2.2.0, 2.2.2
+
+Gatling version refers to the version of the below Gatling dependencies:
+- gatling-test-framework
+- gatling-charts-highcharts
+
+Add the below dependencies:
 
 ```scala
-resolvers += Resolver.bintrayRepo("hmrc", "releases")
+"uk.gov.hmrc"          %% "performance-test-runner"   % "x.x.x" % Test,
+"io.gatling"            % "gatling-test-framework"    % "x.x.x" % Test,
+"io.gatling.highcharts" % "gatling-charts-highcharts" % "x.x.x" % Test
+```
 
-libraryDependencies += "uk.gov.hmrc" %% "performance-test-runner" % "x.x.x"
+Add the below plugin:
+```
+addSbtPlugin("io.gatling" % "gatling-sbt" % "x.x.x")
 ```
 
 ### Implement your first simulation
