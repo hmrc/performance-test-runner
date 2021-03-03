@@ -102,6 +102,7 @@ journeys {
       login,
       home
     ]
+    run-if = ["label-A"]
   }
   
   hello-world-2 = {
@@ -111,6 +112,7 @@ journeys {
     parts = [
       login
     ]
+    run-if = ["label-B"]
   }
 
 }
@@ -211,6 +213,10 @@ class HelloWorldSimulation extends ConfigurationDrivenSimulations {
 `feeder` is the relative path to the csv feeder file. More [here](http://gatling.io/docs/2.1.7/session/feeder.html#csv-feeders)
 
 `parts` is the list of parts that combined create your journey
+
+`run-if` is an optional list of labels. Runs this journey only if a label from this list is passed in the `labels` parameter of application.conf
+
+`skip-if` is an optional list of labels. Skips this journey if a label from this list is passed in the `labels` parameter of application.conf
 
 You can have as many journeys as you like in journeys.conf, the simulation will start and run them all together.
 

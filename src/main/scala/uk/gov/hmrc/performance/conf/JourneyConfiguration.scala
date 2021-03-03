@@ -95,6 +95,13 @@ case class JourneyDefinition(
   runIf: Set[String] = Set.empty,
   skipIf: Set[String] = Set.empty
 ) {
+
+  /** Checks the run-if and skip-if labels that have been defined within journeys.conf
+    * for a journey to determine if it has been configured correctly and should be executed.
+    *
+    * @param testLabels Set of labels as defined in journeys.conf
+    * @return Boolean, whether it should be executed
+    */
   def shouldRun(testLabels: Set[String]): Boolean = {
     if (runIf.intersect(skipIf).nonEmpty)
       throw new scala.RuntimeException(
