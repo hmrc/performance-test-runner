@@ -214,9 +214,9 @@ class HelloWorldSimulation extends ConfigurationDrivenSimulations {
 
 `parts` is the list of parts that combined create your journey
 
-`run-if` is a list of labels. Runs this journey only if a label from this list is passed in the `labels` parameter of application.conf
+`run-if` is an optional list of labels. Runs this journey only if a label from this list is passed in the `labels` parameter of application.conf
 
-`skip-if` is a list of labels. Skips this journey if a label from this list is passed in the `labels` parameter of application.conf
+`skip-if` is an optional list of labels. Skips this journey if a label from this list is passed in the `labels` parameter of application.conf
 
 You can have as many journeys as you like in journeys.conf, the simulation will start and run them all together.
 
