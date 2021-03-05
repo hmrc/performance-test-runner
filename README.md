@@ -74,10 +74,10 @@ object HelloWorldRequests extends ServicesConfiguration {
 ##### Step 2: Setup the simulation
 
 ```scala
-import uk.gov.hmrc.performance.simulation.ConfigurationDrivenSimulations
+import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import HelloWorldRequests._
 
-class HelloWorldSimulation extends ConfigurationDrivenSimulations {
+class HelloWorldSimulation extends PerformanceTestRunner {
 
   setup("login", "Login") withRequests (navigateToLoginPage, submitLogin)
 
@@ -189,12 +189,12 @@ sbt -Djava.io.tmpdir=${WORKSPACE}/tmp test
 
 ```scala
 import io.gatling.core.action.builder.PauseBuilder
-import uk.gov.hmrc.performance.simulation.ConfigurationDrivenSimulations
+import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import HelloWorldRequests._
 
 import scala.concurrent.duration._
 
-class HelloWorldSimulation extends ConfigurationDrivenSimulations {
+class HelloWorldSimulation extends PerformanceTestRunner {
   
   val pause = new PauseBuilder(1 milliseconds, None)
   
