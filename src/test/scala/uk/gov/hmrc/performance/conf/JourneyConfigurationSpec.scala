@@ -173,6 +173,45 @@ class JourneyConfigurationSpec extends WordSpec with Matchers {
       thrown.getMessage shouldBe "the abstract journey missing-journey is not defined"
     }
 
+    "use the feeder value configured in journey definition" in {
+      val configUnderTest = new JourneyConfiguration {
+        override lazy val applicationConfig: Config = ConfigFactory
+          .load("journeys")
+          .withFallback(
+            ConfigFactory.parseMap(
+              Map[String, Any](
+                "journeys.journey-with-feeder.description" -> "Journey with feeder",
+                "journeys.journey-with-feeder.load"        -> "0.1",
+                "journeys.journey-with-feeder.parts"       -> List("home", "login").asJava,
+                "journeys.journey-with-feeder.feeder"      -> "data/example.csv"
+              ).asJava
+            )
+          )
+      }
+      val actualJourney   = configUnderTest.definitions().filter(_.id == "journey-with-feeder")
+      actualJourney               should have size 1
+      actualJourney.head.feeder shouldBe "data/example.csv"
+    }
+
+    "have a empty feeder when feeder is not configured in journey definition " in {
+      val configUnderTest = new JourneyConfiguration {
+        override lazy val applicationConfig: Config = ConfigFactory
+          .load("journeys")
+          .withFallback(
+            ConfigFactory.parseMap(
+              Map[String, Any](
+                "journeys.journey-without-feeder.description" -> "Journey without feeder",
+                "journeys.journey-without-feeder.load"        -> "0.1",
+                "journeys.journey-without-feeder.parts"       -> List("home", "login").asJava
+              ).asJava
+            )
+          )
+      }
+      val actualJourney   = configUnderTest.definitions().filter(_.id == "journey-without-feeder")
+      actualJourney               should have size 1
+      actualJourney.head.feeder shouldBe empty
+    }
+
     "the feeder defined in the non-abstract journey should override the one defined in the abstract one" in {
 
       val configUnderTest = new JourneyConfiguration {
