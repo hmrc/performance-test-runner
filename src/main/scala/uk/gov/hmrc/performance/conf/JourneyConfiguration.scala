@@ -35,54 +35,61 @@ trait JourneyConfiguration extends Configuration {
     if (!allJourneys.contains(id))
       throw new RuntimeException(s"The test is configured to run '$id' but it couldn't be found in journeys.conf")
 
+  /** Maps the journeys defined in journeys.conf to a Seq of
+    *  [[uk.gov.hmrc.performance.conf.JourneyDefinition]] and returns the journeys to be executed
+    *  based on the provided labels. The `labels` field is defined in application.conf.
+    *
+    * @param labels An optional parameter with a Set of labels for which the journeys should be executed.
+    * @return Seq of JourneyDefinition to be executed for the provided labels.
+    */
   def definitions(labels: Set[String] = Set.empty): Seq[JourneyDefinition] = {
-    val journeys = journeysAvailable
-      .filter(id => !readPropertyBooleanOption(s"journeys.$id.abstract").getOrElse(false))
+    val journeyDefinitions = journeysAvailable
       .map { id =>
-        val journeyToExtend     = readPropertyOption(s"journeys.$id.extends")
-        val abstractDescription = journeyToExtend
-          .map { abstractJourneyId =>
-            validateExtendedJourney(abstractJourneyId)
-            readProperty(s"journeys.$abstractJourneyId.description")
-          }
-          .getOrElse(readProperty(s"journeys.$id.description"))
-        val load                = readProperty(s"journeys.$id.load").toDouble
-        val parts               = journeyToExtend
-          .map(abstractJourneyId => readPropertyList(s"journeys.$abstractJourneyId.parts"))
-          .getOrElse(readPropertyList(s"journeys.$id.parts"))
-        val feeder              = readPropertyOption(s"journeys.$id.feeder").getOrElse(
-          journeyToExtend
-            .flatMap(abstractJourneyId => readPropertyOption(s"journeys.$abstractJourneyId.feeder"))
-            .getOrElse("")
-        )
-        val runIf               = readPropertySetOrEmpty(s"journeys.$id.run-if")
-        val skipIf              = readPropertySetOrEmpty(s"journeys.$id.skip-if")
-        val description         = generateDescription(abstractDescription, runIf, skipIf)
+        val journeyDescription = readProperty(s"journeys.$id.description")
+        val load               = readProperty(s"journeys.$id.load").toDouble
+        val parts              = readPropertyList(s"journeys.$id.parts")
+        val feeder             = readPropertyOption(s"journeys.$id.feeder").getOrElse("")
+        val runIf              = readPropertySetOrEmpty(s"journeys.$id.run-if")
+        val skipIf             = readPropertySetOrEmpty(s"journeys.$id.skip-if")
+        val description        = generateDescription(journeyDescription, runIf, skipIf)
         JourneyDefinition(id, description, load, parts, feeder, runIf, skipIf)
       }
-    journeys.filter(definition => definition.shouldRun(labels))
+    journeyDefinitions.filter(journeyDefinition => journeyDefinition.shouldRun(labels))
   }
 
-  def validateExtendedJourney(abstractJourneyId: String): Unit = {
-    if (!hasProperty(s"journeys.$abstractJourneyId")) {
-      throw new scala.RuntimeException(s"the abstract journey $abstractJourneyId is not defined")
-    }
-    if (hasProperty(s"journeys.$abstractJourneyId.extends")) {
-      throw new scala.RuntimeException(s"the abstract journey $abstractJourneyId should not extend any other journey")
-    }
-    val extendedJourneyIsAbstract = readPropertyBooleanOption(s"journeys.$abstractJourneyId.abstract")
-    if (!extendedJourneyIsAbstract.getOrElse(false)) {
-      throw new scala.RuntimeException(s"the extended journey $abstractJourneyId should be abstract")
-    }
-  }
-
-  def generateDescription(abstractDescription: String, runIf: Set[String], skipIf: Set[String]): String = {
+  /** Generates a new description for a journey based on the description, run-if, and skip-if fields in journeys.conf
+    *
+    * Example:
+    *
+    * For the below example journey in journey.conf:
+    * {{{
+    * hello-world-4 = {
+    *   description = "Hello world journey 4"
+    *   load = 0.1
+    *   feeder = data/helloworld.csv
+    *   parts = [
+    *     home
+    *   ]
+    *   run-if = ["label-B"]
+    *   skip-if = ["label-A", "label-C"]
+    * }
+    * }}}
+    * the generated description would be:
+    *
+    * `Hello world journey 4 - runIf [label-B] and skipIf [label-A,label-C]`
+    *
+    * @param journeyDescription Value from the description field of a journey in journeys.conf
+    * @param runIf Labels included in run-if field of a journey in journeys.conf
+    * @param skipIf Labels included in skip-if field of a journey in journeys.conf
+    * @return A new description based on the description and the labels
+    */
+  def generateDescription(journeyDescription: String, runIf: Set[String], skipIf: Set[String]): String = {
     val runIfDescription  = if (runIf.nonEmpty) "runIf " + s"[${runIf.mkString(",")}]" else ""
     val skipIfDescription = if (skipIf.nonEmpty) "skipIf " + s"[${skipIf.mkString(",")}]" else ""
     val and               = if (runIf.nonEmpty && skipIf.nonEmpty) " and " else ""
     val labels            = runIfDescription + and + skipIfDescription
     val separator         = if (labels.nonEmpty) " - " else ""
-    abstractDescription + separator + labels
+    journeyDescription + separator + labels
   }
 }
 
@@ -99,7 +106,7 @@ case class JourneyDefinition(
   /** Checks the run-if and skip-if labels that have been defined within journeys.conf
     * for a journey to determine if it has been configured correctly and should be executed.
     *
-    * @param testLabels Set of labels as defined in journeys.conf
+    * @param testLabels Set of labels as defined in application.conf
     * @return Boolean, whether it should be executed
     */
   def shouldRun(testLabels: Set[String]): Boolean = {

@@ -93,170 +93,64 @@ class JourneyConfigurationSpec extends WordSpec with Matchers {
       ConfigFactory.invalidateCaches()
     }
 
-    "an abstract journey should not extend any other journey" in {
-
-      val thrown = intercept[RuntimeException] {
-        val configUnderTest = new JourneyConfiguration {
-          override lazy val applicationConfig: Config = ConfigFactory
-            .load("journeys")
-            .withFallback(
-              ConfigFactory.parseMap(
-                Map[String, String](
-                  "journeys.test-abstract-journey.abstract" -> "true",
-                  "journeys.test-abstract-journey.extends"  -> "base-journey",
-                  "journeys.test-abstract-journey.load"     -> "6",
-                  "journeys.test-journey.extends"           -> "test-abstract-journey"
-                ).asJava
-              )
-            )
-        }
-        configUnderTest.definitions()
-      }
-      thrown.getMessage shouldBe "the abstract journey test-abstract-journey should not extend any other journey"
-    }
-
-    "an extended journey should be abstract - abstract key missing" in {
-
-      val thrown = intercept[RuntimeException] {
-        val configUnderTest = new JourneyConfiguration {
-          override lazy val applicationConfig: Config = ConfigFactory
-            .load("journeys")
-            .withFallback(
-              ConfigFactory.parseMap(
-                Map[String, String](
-                  "journeys.test-journey.extends" -> "hello-world-1"
-                ).asJava
-              )
-            )
-        }
-        configUnderTest.definitions()
-      }
-      thrown.getMessage shouldBe "the extended journey hello-world-1 should be abstract"
-    }
-
-    "an extended journey should be abstract - abstract key set to false" in {
-
-      val thrown = intercept[RuntimeException] {
-        val configUnderTest = new JourneyConfiguration {
-          override lazy val applicationConfig: Config = ConfigFactory
-            .load("journeys")
-            .withFallback(
-              ConfigFactory.parseMap(
-                Map[String, String](
-                  "journeys.test-journey.extends"   -> "hello-world-1",
-                  "journeys.hello-world-1.abstract" -> "false"
-                ).asJava
-              )
-            )
-        }
-        configUnderTest.definitions()
-      }
-      thrown.getMessage shouldBe "the extended journey hello-world-1 should be abstract"
-    }
-
-    "an abstract journey should be defined" in {
-
-      val thrown = intercept[RuntimeException] {
-        val configUnderTest = new JourneyConfiguration {
-          override lazy val applicationConfig: Config = ConfigFactory
-            .load("journeys")
-            .withFallback(
-              ConfigFactory.parseMap(
-                Map[String, String](
-                  "journeys.test-journey.extends" -> "missing-journey"
-                ).asJava
-              )
-            )
-        }
-        configUnderTest.definitions()
-      }
-      thrown.getMessage shouldBe "the abstract journey missing-journey is not defined"
-    }
-
-    "the feeder defined in the non-abstract journey should override the one defined in the abstract one" in {
-
+    "use the feeder value configured in journey definition" in {
       val configUnderTest = new JourneyConfiguration {
         override lazy val applicationConfig: Config = ConfigFactory
           .load("journeys")
           .withFallback(
             ConfigFactory.parseMap(
-              Map[String, AnyRef](
-                "journeys.abstract-journey.abstract"    -> "true",
-                "journeys.abstract-journey.description" -> "Some Journey",
-                "journeys.abstract-journey.feeder"      -> "data/helloworld.csv",
-                "journeys.abstract-journey.parts"       -> Set("login", "home").asJava,
-                "journeys.test-journey.extends"         -> "abstract-journey",
-                "journeys.test-journey.load"            -> "1",
-                "journeys.test-journey.feeder"          -> "data/feed-1.csv"
+              Map[String, Any](
+                "journeys.journey-with-feeder.description" -> "Journey with feeder",
+                "journeys.journey-with-feeder.load"        -> "0.1",
+                "journeys.journey-with-feeder.parts"       -> List("home", "login").asJava,
+                "journeys.journey-with-feeder.feeder"      -> "data/example.csv"
               ).asJava
             )
           )
       }
-      val journey         = configUnderTest.definitions().find(_.description == "Some Journey")
-      journey.isDefined  shouldBe true
-      journey.get.feeder shouldBe "data/feed-1.csv"
-
+      val actualJourney   = configUnderTest.definitions().filter(_.id == "journey-with-feeder")
+      actualJourney               should have size 1
+      actualJourney.head.feeder shouldBe "data/example.csv"
     }
 
-    val scenarios = Table(
-      ("scenario", "id", "expectedDescription", "expectedLoad", "expectedRunIf", "expectedSkipIf"),
-      ("with no runIf/skipIf", "test-journey-4", "Base journey", 8, Set.empty[String], Set.empty[String]),
-      (
-        "with both runIf and skipIf",
-        "test-journey-1",
-        "Base journey - runIf [label-1] and skipIf [label-2,label-3]",
-        5,
-        Set("label-1"),
-        Set("label-2", "label-3")
-      ),
-      (
-        "with skipIf only",
-        "test-journey-2",
-        "Base journey - skipIf [label-2,label-3]",
-        6,
-        Set.empty[String],
-        Set("label-2", "label-3")
-      ),
-      ("with runIf only", "test-journey-3", "Base journey - runIf [label-1]", 7, Set("label-1"), Set.empty[String])
-    )
-
-    forAll(scenarios) { (scenario, id, expectedDescription, expectedLoad, expectedRunIf, expectedSkipIf) =>
-      s"a journey can extend an abstract one - $scenario" in {
-        val configUnderTest = new JourneyConfiguration {
-          override lazy val applicationConfig: Config = ConfigFactory
-            .load("journeys")
-            .withFallback(
-              ConfigFactory.parseMap(
-                Map[String, AnyRef](
-                  "journeys.test-journey-1.extends" -> "base-journey",
-                  "journeys.test-journey-1.load"    -> "5",
-                  "journeys.test-journey-1.run-if"  -> Set("label-1").asJava,
-                  "journeys.test-journey-1.skip-if" -> Set("label-2", "label-3").asJava,
-                  "journeys.test-journey-2.extends" -> "base-journey",
-                  "journeys.test-journey-2.load"    -> "6",
-                  "journeys.test-journey-2.skip-if" -> Set("label-2", "label-3").asJava,
-                  "journeys.test-journey-3.extends" -> "base-journey",
-                  "journeys.test-journey-3.load"    -> "7",
-                  "journeys.test-journey-3.run-if"  -> Set("label-1").asJava,
-                  "journeys.test-journey-4.extends" -> "base-journey",
-                  "journeys.test-journey-4.load"    -> "8"
-                ).asJava
-              )
+    "have a empty feeder when feeder is not configured in journey definition " in {
+      val configUnderTest = new JourneyConfiguration {
+        override lazy val applicationConfig: Config = ConfigFactory
+          .load("journeys")
+          .withFallback(
+            ConfigFactory.parseMap(
+              Map[String, Any](
+                "journeys.journey-without-feeder.description" -> "Journey without feeder",
+                "journeys.journey-without-feeder.load"        -> "0.1",
+                "journeys.journey-without-feeder.parts"       -> List("home", "login").asJava
+              ).asJava
             )
-        }
-
-        configUnderTest.definitions(Set("label-1")) should contain(
-          JourneyDefinition(
-            id = id,
-            description = expectedDescription,
-            load = expectedLoad,
-            parts = List("login", "home"),
-            feeder = "data/helloworld.csv",
-            runIf = expectedRunIf,
-            skipIf = expectedSkipIf
           )
-        )
       }
+      val actualJourney   = configUnderTest.definitions().filter(_.id == "journey-without-feeder")
+      actualJourney               should have size 1
+      actualJourney.head.feeder shouldBe empty
+    }
+
+    "include run-if labels in description when specified in journey definition" in {
+      val configUnderTest = new JourneyConfiguration {}
+      val actualJourney   = configUnderTest.definitions(Set("label-B")).filter(_.id == "hello-world-3")
+      actualJourney                    should have size 1
+      actualJourney.head.description shouldBe "Hello world journey 3 - runIf [label-B]"
+    }
+
+    "include skip-if labels in description when specified in journey definition" in {
+      val configUnderTest = new JourneyConfiguration {}
+      val actualJourney   = configUnderTest.definitions(Set("label-B")).filter(_.id == "hello-world-2")
+      actualJourney                    should have size 1
+      actualJourney.head.description shouldBe "Hello world journey 2 - skipIf [label-A,label-C]"
+    }
+
+    "include run-if and skip-if labels in description when specified in journey definition" in {
+      val configUnderTest = new JourneyConfiguration {}
+      val actualJourney   = configUnderTest.definitions(Set("label-B")).filter(_.id == "hello-world-4")
+      actualJourney                    should have size 1
+      actualJourney.head.description shouldBe "Hello world journey 4 - runIf [label-B] and skipIf [label-A,label-C]"
     }
   }
 
