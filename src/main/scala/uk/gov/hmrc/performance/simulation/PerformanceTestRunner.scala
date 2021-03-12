@@ -17,20 +17,25 @@
 package uk.gov.hmrc.performance.simulation
 
 import io.gatling.core.Predef._
+import org.slf4j.{Logger, LoggerFactory}
 import uk.gov.hmrc.performance.conf.HttpConfiguration
 
 trait PerformanceTestRunner extends Simulation with HttpConfiguration with JourneySetup {
+
+  private val logger: Logger = LoggerFactory.getLogger(classOf[PerformanceTestRunner])
 
   def runSimulation(): Unit = {
 
     import scala.concurrent.duration._
     val timeoutAtEndOfTest: FiniteDuration = 5 minutes
 
-    println(s"Setting up simulation ")
+    logger.info(s"Setting up simulation ")
 
     if (runSingleUserJourney) {
 
-      println(s"'perftest.runSmokeTest' is set to true, ignoring all loads and running with only one user per journey!")
+      logger.info(
+        s"'perftest.runSmokeTest' is set to true, ignoring all loads and running with only one user per journey!"
+      )
 
       val injectedBuilders = journeys.map { scenario =>
         scenario.builder.inject(atOnceUsers(1))

@@ -19,6 +19,7 @@ package uk.gov.hmrc.performance.simulation
 import io.gatling.core.Predef.{constantUsersPerSec, exec, group, rampUsersPerSec, scenario, _}
 import io.gatling.core.controller.inject.open.OpenInjectionStep
 import io.gatling.core.structure.{PopulationBuilder, ScenarioBuilder}
+import org.slf4j.{Logger, LoggerFactory}
 import uk.gov.hmrc.performance.conf.{JourneyConfiguration, PerftestConfiguration}
 import uk.gov.hmrc.performance.feeder.CsvFeeder
 
@@ -28,6 +29,8 @@ import scala.util.Random
   */
 
 trait JourneySetup extends JourneyConfiguration with PerftestConfiguration {
+
+  private val logger: Logger = LoggerFactory.getLogger(classOf[JourneySetup])
 
   private[simulation] val parts = scala.collection.mutable.MutableList[JourneyPart]()
 
@@ -51,10 +54,10 @@ trait JourneySetup extends JourneyConfiguration with PerftestConfiguration {
     */
   protected def journeys: Seq[Journey] = {
 
-    println(s"Implemented journey parts: ${parts.map(_.id).mkString(", ")}")
+    logger.info(s"Implemented journey parts: ${parts.map(_.id).mkString(", ")}")
 
     definitions(labels).map { conf =>
-      println(s"Setting up scenario '${conf.id}' to run at ${conf.load} JPS and load to $loadPercentage %")
+      logger.info(s"Setting up scenario '${conf.id}' to run at ${conf.load} JPS and load to $loadPercentage %")
 
       val partsInJourney = conf.parts.map(p =>
         parts
