@@ -4,7 +4,6 @@ object Dependencies {
 
   val compile =
     Seq(
-      "uk.gov.hmrc"          %% "logback-json-logger"       % "4.2.0",
       "com.typesafe.play"    %% "play-json"                 % "2.6.10",
       "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.4.2" % "provided"
     )
