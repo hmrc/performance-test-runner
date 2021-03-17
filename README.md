@@ -167,6 +167,31 @@ username,password
 my-${random}-user,12345678
 ```
 
+##### Creating a custom user feeder:
+The csv user feeder described above should be sufficient for most data driven tests. When csv feeder is not sufficient, custom feeders can be 
+created. 
+
+_Example:_
+
+To create a feeder that generates random UUID, create an Iterator[Map[Key, Value]] and pass it to Gatling's feed method.
+
+```
+val randomUUIDs: Iterator[Map[String, String]] = Iterator.continually(Map("uuid" -> UUID.randomUUID().toString))
+def uuidFeeder: ChainBuilder = feed(randomUUIDs)
+```
+
+To use this feeder, chain the setup by passing the feeder to performance-test-runner's `withActions`
+
+```
+setup("home-page", "Home Page") withActions(uuidFeeder.actionBuilders:_*) withRequests navigateToHomePage
+```
+
+To use the value from the feeder within a request, use the feeder's key which is `uuid` in our example
+
+```
+"searchCriterion": "${uuid}"
+```
+
 ### Run a smoke test
 
 To run a smoke test through all journeys, with one user only, set the following.
