@@ -87,6 +87,27 @@ class HelloWorldSimulation extends PerformanceTestRunner {
 }
 ```
 
+
+##### Conditionally run a simulation setup step:
+Using a `toRunIf` it is possible to only run a journey part when a condition has been met.
+
+_Example:_ To create a new sessionKey called `check-status` which stores the value of the `status` returned from this request.
+
+```scala
+  val navigateToHomePage: HttpRequestBuilder =
+    http("Navigate to Home Page")
+      .get(s"$baseUrl$route/vat-return-period")
+      .check(status.is(200))
+      .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
+      .check(status.transform(_.toString).saveAs("check-status"))
+```
+To use this condition, chain the setup by passing the condition to performance-test-runner's `toRunIf` method.
+```scala
+setup("post-vat-return-period", "Post vat return period") withRequests postVatReturnPeriod toRunIf("${check-status}", "200")
+```
+
+This setup step will now only run if the value from the new sessionKey `check-status` matches the value `200` as specfied in the `toRunIf` condition. 
+
 ##### Step 3. Configure the journeys 
 
 journeys.conf
@@ -175,14 +196,14 @@ _Example:_
 
 To create a feeder that generates random UUID, create an Iterator[Map[Key, Value]] and pass it to Gatling's feed method.
 
-```
+```scala
 val randomUUIDs: Iterator[Map[String, String]] = Iterator.continually(Map("uuid" -> UUID.randomUUID().toString))
 def uuidFeeder: ChainBuilder = feed(randomUUIDs)
 ```
 
 To use this feeder, chain the setup by passing the feeder to performance-test-runner's `withActions`
 
-```
+```scala
 setup("home-page", "Home Page") withActions(uuidFeeder.actionBuilders:_*) withRequests navigateToHomePage
 ```
 
