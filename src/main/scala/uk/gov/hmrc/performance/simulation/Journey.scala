@@ -47,6 +47,13 @@ case class JourneyPart(id: String, description: String) {
     this
   }
 
+  /** Checks whether or not to run the journey part based on whether or not the value returned
+   * from the sessionKey matches the value
+   *
+   * @param sessionKey the sessionKey to obtain the value for.
+   * @param value the value to compare against the sessionKey value.
+   * @return JourneyPart
+   */
   def toRunIf(sessionKey: Expression[String], value: String): JourneyPart = {
     conditionallyRun = doIfEquals(sessionKey, value)
     this
