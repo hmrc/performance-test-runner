@@ -47,13 +47,14 @@ case class JourneyPart(id: String, description: String) {
     this
   }
 
-  /** Checks whether or not to run the journey part based on whether or not the value returned
-   * from the sessionKey matches the value
-   *
-   * @param sessionKey the sessionKey to obtain the value for.
-   * @param value the value to compare against the sessionKey value.
-   * @return JourneyPart
-   */
+  /** Checks whether to run a setup step depending on whether the actual sessionKey value
+    *  matches the expected value. The expected value can also be a Gatling sessionKey as the underlying
+    *  doIfEquals method implicitly converts it into an Expression[Any].
+    *
+    * @param sessionKey the sessionKey to obtain the actual value.
+    * @param value the expected value to compare.
+    * @return JourneyPart
+    */
   def toRunIf(sessionKey: Expression[String], value: String): JourneyPart = {
     conditionallyRun = doIfEquals(sessionKey, value)
     this

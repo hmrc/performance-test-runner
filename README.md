@@ -87,26 +87,19 @@ class HelloWorldSimulation extends PerformanceTestRunner {
 }
 ```
 
+##### Conditionally run a setup step:
+The `toRunIf` method can be used to conditionally run a setup step based on a value in the Gatling session. 
+If the value in the Gatling session for the provided sessionKey matches the expected value then the setup 
+is executed.
 
-##### Conditionally run a simulation setup step:
-Using a `toRunIf` it is possible to only run a journey part when a condition has been met.
+In the below example, the `post-vat-return-period` setup will be run only if the Gatling session has a value 200 for the sessionKey `check-status`.
 
-_Example:_ To create a new sessionKey called `check-status` which stores the value of the `status` returned from this request.
-
-```scala
-  val navigateToHomePage: HttpRequestBuilder =
-    http("Navigate to Home Page")
-      .get(s"$baseUrl$route/vat-return-period")
-      .check(status.is(200))
-      .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
-      .check(status.transform(_.toString).saveAs("check-status"))
-```
-To use this condition, chain the setup by passing the condition to performance-test-runner's `toRunIf` method.
 ```scala
 setup("post-vat-return-period", "Post vat return period") withRequests postVatReturnPeriod toRunIf("${check-status}", "200")
 ```
 
-This setup step will now only run if the value from the new sessionKey `check-status` matches the value `200` as specfied in the `toRunIf` condition. 
+**Note:**
+When the `toRunIf` condition is not met, then all requests within the setup will not be executed.
 
 ##### Step 3. Configure the journeys 
 
