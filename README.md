@@ -87,6 +87,20 @@ class HelloWorldSimulation extends PerformanceTestRunner {
 }
 ```
 
+##### Conditionally run a setup step:
+The `toRunIf` method can be used to conditionally run a setup step based on a value in the Gatling session. 
+If the value in the Gatling session for the provided sessionKey matches the expected value then the setup 
+is executed.
+
+In the below example, the `post-vat-return-period` setup will be run only if the Gatling session has a value 200 for the sessionKey `check-status`.
+
+```scala
+setup("post-vat-return-period", "Post vat return period") withRequests postVatReturnPeriod toRunIf("${check-status}", "200")
+```
+
+**Note:**
+When the `toRunIf` condition is not met, then all requests within the setup will not be executed.
+
 ##### Step 3. Configure the journeys 
 
 journeys.conf
@@ -175,14 +189,14 @@ _Example:_
 
 To create a feeder that generates random UUID, create an Iterator[Map[Key, Value]] and pass it to Gatling's feed method.
 
-```
+```scala
 val randomUUIDs: Iterator[Map[String, String]] = Iterator.continually(Map("uuid" -> UUID.randomUUID().toString))
 def uuidFeeder: ChainBuilder = feed(randomUUIDs)
 ```
 
 To use this feeder, chain the setup by passing the feeder to performance-test-runner's `withActions`
 
-```
+```scala
 setup("home-page", "Home Page") withActions(uuidFeeder.actionBuilders:_*) withRequests navigateToHomePage
 ```
 
