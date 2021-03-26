@@ -243,6 +243,30 @@ class HelloWorldSimulation extends PerformanceTestRunner {
 }
 ```
 
+#### Using Gatling's Session API 
+
+Gatling's [Session API](https://gatling.io/docs/3.4/session/session_api/) is used to update
+Gatling's Session. To use the Session API with performance-test-runner, the `ChainBuilder` returned when executing a Session
+API should be converted into an `ActionBuilder`. The `ActionBuilder` then can be chained to a `setup` using `withActions`. 
+
+An example:
+
+```scala
+import io.gatling.core.action.builder.ActionBuilder
+import io.gatling.core.session.Session
+import io.gatling.core.Predef._
+
+/** Executes the Session API to set testId with value perf-12345 in Gatling's Session.
+ *  Converts the resulting ChainBuilder to a List[ActionBuilder] 
+ */
+val setRandomTestId: List[ActionBuilder] = {
+    exec((session: Session) => session.set("testId", "perf-12345}"))
+  }.actionBuilders
+
+// Chains the setRandomTestId using `withActions`
+setup("prep", "Prepare for test") withActions (setRandomTestId:_*)
+```
+
 ### More about the journey configuration.
 
 `description` will be assigned to the journey in the test report
