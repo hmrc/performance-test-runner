@@ -7,6 +7,7 @@
 * [Implementing the HTTP requests](#implementing-the-http-requests)
 * [Configuring the tests](#configuring-the-tests)
 * [Running the tests](#running-the-tests)
+* [Assertions](#assertions)
 * [Feeder files to inject test data](#feeder-files-to-inject-test-data)
 * [Using a pause builder between requests](#using-a-pause-builder-between-requests)
 * [Using Gatling's Session API](#using-gatlings-session-api)
@@ -218,6 +219,15 @@ A full performance test should be executed only from the Performance Jenkins ins
 ```
 sbt -DrunLocal=false gatling:test
 ```
+### Assertions
+The performance-test-runner library is [pre-configured](src/main/scala/uk/gov/hmrc/performance/conf/PerftestConfiguration.scala) with the following assertions:
+* Overall failed requests count should be less than 1% of all the requests
+* Individual failed requests count should be less than 1% of individual requests
+
+The failure % is configurable within the [application.conf](#applicationconf) of the test repository.
+
+**Note:** *The default assertions provided are there for guidance only. It is important that teams review each test run 
+in order to ensure the results meet their requirements.*
 
 ### Feeder files to inject test data
 Feeder files can be used to inject test data specific to each user. CSV feeder is the only type of feeder supported by default.
