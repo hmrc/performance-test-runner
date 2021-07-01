@@ -42,9 +42,6 @@ trait PerformanceTestRunner extends Simulation with HttpConfiguration with Journ
     */
   def runSimulation(): Unit = {
 
-    import scala.concurrent.duration._
-    val timeoutAtEndOfTest: FiniteDuration = 5 minutes
-
     logger.info(s"Setting up simulation ")
 
     if (runSingleUserJourney) {
@@ -62,7 +59,6 @@ trait PerformanceTestRunner extends Simulation with HttpConfiguration with Journ
         .assertions(global.failedRequests.count.is(0))
     } else {
       setUp(withInjectedLoad(journeys): _*)
-        .maxDuration(rampUpTime + constantRateTime + rampDownTime + timeoutAtEndOfTest)
         .protocols(httpProtocol)
         .assertions(global.failedRequests.percent.lte(percentageFailureThreshold))
         .assertions(forAll.failedRequests.percent.lte(requestPercentageFailureThreshold))
