@@ -289,6 +289,8 @@ import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import HelloWorldRequests._
 
 import scala.concurrent.duration._
+// required to convert FiniteDuration to session.Expression[FiniteDuration] to use in PauseBuilder
+import io.gatling.core.Predef._  
 
 class HelloWorldSimulation extends PerformanceTestRunner {
   
