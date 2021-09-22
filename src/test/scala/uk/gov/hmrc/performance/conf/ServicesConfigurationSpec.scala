@@ -39,7 +39,6 @@ class ServicesConfigurationSpec extends WordSpec with Matchers with ServicesConf
       baseUrl shouldBe expectedBaseUrl
     }
 
-
     "read services-local configurations if runLocal = true" in {
 
       val configUnderTest = new ServicesConfiguration {}
