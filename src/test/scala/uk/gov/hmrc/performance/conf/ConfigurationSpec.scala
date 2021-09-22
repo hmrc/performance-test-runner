@@ -31,24 +31,6 @@ class ConfigurationSpec extends WordSpec with Matchers {
       configUnderTest.runLocal shouldBe true
     }
 
-    "read a simple property" in {
-
-      val configUnderTest = new Configuration {}
-      configUnderTest.readProperty("baseUrl") shouldBe "http://helloworld-service.co.uk"
-    }
-
-    "give priority to environment variables" in {
-
-      Properties.setProp("baseUrl", "anotherBaseUrl")
-      ConfigFactory.invalidateCaches()
-
-      val configUnderTest = new Configuration {}
-      configUnderTest.readProperty("baseUrl") shouldBe "anotherBaseUrl"
-
-      Properties.clearProp("baseUrl")
-      ConfigFactory.invalidateCaches()
-    }
-
     "read services-local configurations if runLocal = true" in {
 
       val configUnderTest = new Configuration {}
