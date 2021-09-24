@@ -1,7 +1,7 @@
 lazy val root = (project in file("."))
   .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
   .settings(
-    majorVersion := 4,
+    majorVersion := 5,
     name := "performance-test-runner",
     makePublicallyAvailableOnBintray := true,
     scalaVersion := "2.12.12",

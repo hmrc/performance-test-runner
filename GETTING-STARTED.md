@@ -138,8 +138,6 @@ Most of the properties in `application.conf` is commented out by default. This i
 {
 runLocal = true
 
-baseUrl = "https://helloworld-service.co.uk"
-
 perftest {
   rampupTime = 1
   constantRateTime = 5 

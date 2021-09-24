@@ -18,15 +18,15 @@ package uk.gov.hmrc.performance.conf
 
 trait ServicesConfiguration extends Configuration {
 
-  private val baseUrl = {
-    val prop = readProperty("baseUrl")
-    if (prop.isEmpty) throw new RuntimeException("baseUrl is mandatory but couldn't be found in application.conf")
-    else prop
-  }
-
   private def urlFor(protocol: String, host: String, port: String) =
     if (port.toInt == 80 || port.toInt == 443) s"$protocol://$host" else s"$protocol://$host:$port"
 
+  /**
+    * Returns a baseUrl for the provided serviceName based on the serviceName configuration in
+    * `services.conf` or services-local.conf` when running locally.
+    * @param serviceName
+    * @return baseUrl for the service as a String.
+    */
   def baseUrlFor(serviceName: String): String = {
     val protocol = readProperty(s"services.$serviceName.protocol", "")
     val host     = readProperty(s"services.$serviceName.host", "")
@@ -40,10 +40,17 @@ trait ServicesConfiguration extends Configuration {
 
       urlFor(protocolOrDefault, hostOrDefault, portOrDefault)
     } else {
-      baseUrl
+      val confFile =
+        if (runLocal)
+          "services-local.conf"
+        else
+          "services.conf"
+      throw ConfigNotFoundException(s"'$serviceName' not defined in '$confFile'.")
     }
   }
 
   def serviceIsDefined(protocol: String, host: String, port: String): Boolean =
     !protocol.isEmpty || !host.isEmpty || !port.isEmpty
+
+  case class ConfigNotFoundException(message: String) extends RuntimeException(message)
 }

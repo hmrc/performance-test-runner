@@ -39,20 +39,6 @@ class ServicesConfigurationSpec extends WordSpec with Matchers with ServicesConf
       baseUrl shouldBe expectedBaseUrl
     }
 
-    "return the base url if the service is not found" in {
-
-      // given
-      val someService = "incorrectservicename "
-
-      val expectedBaseUrl = "http://helloworld-service.co.uk"
-
-      // when
-      val baseUrl: String = baseUrlFor(someService)
-
-      // then
-      baseUrl shouldBe expectedBaseUrl
-    }
-
     "read services-local configurations if runLocal = true" in {
 
       val configUnderTest = new ServicesConfiguration {}
@@ -70,6 +56,25 @@ class ServicesConfigurationSpec extends WordSpec with Matchers with ServicesConf
       Properties.clearProp("runLocal")
       ConfigFactory.invalidateCaches()
     }
-  }
 
+    "throw exception when service is not defined in services-local.conf" in {
+      intercept[ConfigNotFoundException] {
+        baseUrlFor("serviceDoesNotExist")
+      }.message shouldBe s"'serviceDoesNotExist' not defined in 'services-local.conf'."
+    }
+
+    "throw exception when service is not defined in services.conf" in {
+      Properties.setProp("runLocal", "false")
+      ConfigFactory.invalidateCaches()
+
+      val configUnderTest = new ServicesConfiguration {}
+
+      intercept[ConfigNotFoundException] {
+        configUnderTest.baseUrlFor("serviceDoesNotExist")
+      }.message shouldBe s"'serviceDoesNotExist' not defined in 'services.conf'."
+
+      Properties.clearProp("runLocal")
+      ConfigFactory.invalidateCaches()
+    }
+  }
 }
