@@ -379,11 +379,14 @@ setup("post-vat-return-period", "Post vat return period")  withRequests(addItem)
 
 #### Iterate asLongAs
 Use `asLongAs` to iterate [as long as](https://gatling.io/docs/gatling/reference/3.4/general/scenario/#aslongas) the 
-condition is satisfied and the duration has not been reached.
+`condition` is satisfied. `condition` is a session function that returns a boolean value. 
 
-For example, to repeat a request `asLongAs` the status of a page is **not** `200`:
+For example, to repeat a request `asLongAs` the status of a page is **not** `200`
 
 ```scala
+//Import required to use `asLongAs` and to implicitly convert boolean to  session.Expression[Boolean] 
+import io.gatling.core.Predef._
+
 def getTurnoverPage: List[ActionBuilder] = {
   asLongAs(session => 
     !session.attributes.get("turnOverPageStatus").contains(200)) {
