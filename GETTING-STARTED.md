@@ -256,7 +256,7 @@ from 1 again when it reaches the max value. For example ${range-3} will be repla
 the next and so on.
 
 ### Using Gatling's Exec method with performance-test-runner
-Gatling's Exec method is used to execute an action. Actions are usually requests like an HTTP request or editing a Gatling session.
+Gatling's Exec method is used to execute an action. Actions are usually requests like an HTTP request. Additionally, actions can edit or debug a Gatling session.
 
 For example, the contents of a Session can be displayed using the Gatling DSL as below:
 ```scala
