@@ -396,7 +396,7 @@ def getTurnoverPage: List[ActionBuilder] = {
 **NOTE:** `asLongAs` also takes additional optional parameters `counterName` and `exitASAP`.
 
 > When session key is set externally, for example in an earlier request, ensure the session keys are reset where required.
-> See the [session API section](#Using Gatling's Session API) for updating Gatling's session. 
+> See the [session API section](#using-gatlings-session-api) for updating Gatling's session. 
 
 
 Checkout Gatling's [Scenario documentation](https://gatling.io/docs/gatling/reference/3.4/general/scenario/) for all
