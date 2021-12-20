@@ -9,8 +9,11 @@
 * [Running the tests](#running-the-tests)
 * [Assertions](#assertions)
 * [Feeder files to inject test data](#feeder-files-to-inject-test-data)
+* [Using Gatling's Exec method with performance-test-runner](#using-gatlings-exec-method-with-performance-test-runner)
 * [Using a pause builder between requests](#using-a-pause-builder-between-requests)
 * [Using Gatling's Session API](#using-gatlings-session-api)
+* [Repeat a request](#repeat-a-request)
+* [Iterate asLongAs](#iterate-asLongAs)
 * [Conditionally run a setup step](#conditionally-run-a-setup-step)
 
 ### Prerequisite
@@ -252,7 +255,45 @@ The available placeholders are:<br>
 from 1 again when it reaches the max value. For example ${range-3} will be replaced with '001' the first time, '002' 
 the next and so on.
 
-### Creating a custom user feeder
+### Using Gatling's Exec method with performance-test-runner
+Gatling's Exec method is used to execute an action. Actions are usually requests like an HTTP request. Additionally, actions can edit or debug a Gatling session.
+
+For example, the contents of a Session can be displayed using the Gatling DSL as below:
+```scala
+exec { session =>
+  // displays the content of the session in the console (debugging only)
+  println(session)
+
+  // return the original session
+  session
+}
+```
+You can read more about the Exec function in the [Gatling documentation](https://gatling.io/docs/gatling/reference/3.4/general/scenario/#exec)
+
+The `exec` function returns a ChainBuilder. To use `exec` with performance-test-runner, convert the ChainBuilder to an ActionBuilder. 
+So, to display the contents of the Gatling session with performance-test-runner:
+
+```scala
+import io.gatling.core.action.builder.ActionBuilder
+import io.gatling.core.session.Session
+import io.gatling.core.Predef._
+
+/** Executes the Session API to print session information.
+ * Converts the resulting ChainBuilder to a List[ActionBuilder] to use with `withActions`
+ */
+val printSession: List[ActionBuilder] =
+  exec { session =>
+    println(session)
+    session
+  }.actionBuilders
+
+// Prints the session information after navigating to the home page
+setup("home-page", "Home Page") withRequests navigateToHomePage withActions(printSession: _*)
+```
+
+Below, you can find ways to use some common Gatling functions with performance-test-runner.
+
+#### Creating a custom user feeder
 The `CSV` user feeder described above should be sufficient for most data driven tests. When `CSV` feeder is not sufficient, custom feeders can be
 created.
 
@@ -279,7 +320,7 @@ The value then can be extracted using Gatling's [Expression Language](https://ga
   }
 ```
 
-### Using a pause builder between requests
+#### Using a pause builder between requests
 
 ```scala
 import io.gatling.core.action.builder.PauseBuilder
@@ -300,7 +341,7 @@ class HelloWorldSimulation extends PerformanceTestRunner {
 }
 ```
 
-### Using Gatling's Session API
+#### Using Gatling's Session API
 Gatling's [Session API](https://gatling.io/docs/3.4/session/session_api/) is used to update Gatling's Session. To use
 the Session API with performance-test-runner, the `ChainBuilder` returned when executing a Session API should be 
 converted into an `ActionBuilder`. The `ActionBuilder` then can be chained to a `setup` using `withActions`.
@@ -320,6 +361,49 @@ val setRandomTestId: List[ActionBuilder] = {
 // Chains the setRandomTestId using `withActions`
 setup("prep", "Prepare for test") withActions (setRandomTestId:_*)
 ```
+
+#### Repeat a request
+A request or requests can be repeated multiple times using Gatling's [repeat](https://gatling.io/docs/gatling/reference/3.4/general/scenario/#repeat) function.
+This is useful when you want to repeat certain requests for a certain number of time. For example, adding 3 items during a journey.
+
+```scala
+def repeatRequests: List[ActionBuilder] = {
+  repeat(3) {
+    exec(addItem)
+      .exec(getItemPage)
+  }.actionBuilders
+}
+
+setup("post-vat-return-period", "Post vat return period")  withRequests(addItem) withActions (repeatRequests:_*)
+```
+
+#### Iterate asLongAs
+Use `asLongAs` to iterate [as long as](https://gatling.io/docs/gatling/reference/3.4/general/scenario/#aslongas) the 
+`condition` is satisfied. `condition` is a session function that returns a boolean value. 
+
+For example, to repeat a request `asLongAs` the status of a page is **not** `200`
+
+```scala
+//Import required to use `asLongAs` and to implicitly convert boolean to  session.Expression[Boolean] 
+import io.gatling.core.Predef._
+
+def getTurnoverPage: List[ActionBuilder] = {
+  asLongAs(session => 
+    !session.attributes.get("turnOverPageStatus").contains(200)) {
+    exec(http("Get Turnover Page")
+      .get(s"$baseUrl$${turnOverPage}": String)
+      .check(status.saveAs("turnOverPageStatus")))
+  }.actionBuilders
+}
+```
+**NOTE:** `asLongAs` also takes additional optional parameters `counterName` and `exitASAP`.
+
+> When session key is set externally, for example in an earlier request, ensure the session keys are reset where required.
+> See the [session API section](#using-gatlings-session-api) for updating Gatling's session. 
+
+
+Checkout Gatling's [Scenario documentation](https://gatling.io/docs/gatling/reference/3.4/general/scenario/) for all
+available functions.
 
 ### Conditionally run a setup step
 The `toRunIf` method can be used to conditionally run a setup step based on a value in the Gatling session. If the value
