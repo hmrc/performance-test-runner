@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,12 @@ package uk.gov.hmrc.performance.simulation
 
 import io.gatling.core.action.builder.PauseBuilder
 import io.gatling.http.request.builder.HttpRequestBuilder
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.duration._
 
-class JourneySetupSpec extends WordSpec with Matchers {
+class JourneySetupSpec extends AnyWordSpec with Matchers {
 
   import io.gatling.core.Predef._
   import io.gatling.http.Predef._
@@ -31,15 +32,15 @@ class JourneySetupSpec extends WordSpec with Matchers {
     val foo: HttpRequestBuilder = http("Get Foo").get(s"/foo")
     val bar: HttpRequestBuilder = http("Get Bar").get(s"/bar")
 
-    setup("some-id-1", "Some Description 1") withRequests (foo, bar)
-    setup("some-id-2", "Some Description 2") withRequests bar toRunIf ("", "")
+    setup("some-id-1", "Some Description 1").withRequests(foo, bar)
+    setup("some-id-2", "Some Description 2").withRequests(bar).toRunIf("", "")
   }
 
   class TestActionsSetup extends JourneySetup {
     val foo: HttpRequestBuilder = http("Get Foo").get(s"/foo")
     val pause                   = new PauseBuilder(1 milliseconds, None)
 
-    setup("some-id-1", "Some Description 1") withActions (foo, pause)
+    setup("some-id-1", "Some Description 1").withActions(foo, pause)
   }
 
   class MalformedTestSetup extends JourneySetup {

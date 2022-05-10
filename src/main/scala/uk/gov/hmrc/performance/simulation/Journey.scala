@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ trait Journey {
   */
 case class JourneyPart(id: String, description: String) {
 
-  val ab                                             = scala.collection.mutable.MutableList[ActionBuilder]()
+  val ab                                             = scala.collection.mutable.ListBuffer[ActionBuilder]()
   var conditionallyRun: ChainBuilder => ChainBuilder = cb => cb
 
   /** Used internally by uk.gov.hmrc.performance.simulation.JourneySetup.journeys to chain the requests and actions

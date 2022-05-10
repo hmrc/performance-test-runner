@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,13 @@ package uk.gov.hmrc.performance.conf
 import com.typesafe.config.{Config, ConfigFactory}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.Tables.Table
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.duration._
 import scala.util.Properties
 
-class PerftestConfigurationSpec extends WordSpec with Matchers {
+class PerftestConfigurationSpec extends AnyWordSpec with Matchers {
 
   "TestRateConfiguration defaults" should {
 
@@ -56,7 +57,7 @@ class PerftestConfigurationSpec extends WordSpec with Matchers {
 
     val perftestConfiguration = new PerftestConfiguration {
 
-      import collection.JavaConverters._
+      import scala.jdk.CollectionConverters._
 
       override lazy val applicationConfig: Config = ConfigFactory.parseMap(
         Map(

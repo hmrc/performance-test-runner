@@ -1,7 +1,7 @@
 
 # performance-test-runner
 
-This is a wrapper around the [Gatling](http://gatling.io/) load testing framework, 
+This is a wrapper around the [Gatling](http://gatling.io/) load testing framework,
 with preconfigured injection steps, protocols and assertions.
 
 ### Adding to your performance test
@@ -9,7 +9,8 @@ with preconfigured injection steps, protocols and assertions.
 #### Compatible versions
 
 Library Version | Scala Version | gatling-version*          | gatling-sbt plugin
---------------- | ------------- | ------------------------- | ------------------ 
+--------------- | ------------- | ------------------------- | ------------------
+5.3.x           | 2.13          | 3.5.1                     | 4.1.5
 4.x.x, 5.x.x    | 2.12          | 3.4.2                     | 3.2.1
 3.x.x           | 2.11, 2.12    | 2.2.5, 2.3.1              | 2.2.0, 2.2.2
 
