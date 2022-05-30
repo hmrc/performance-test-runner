@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ trait JourneySetup extends JourneyConfiguration with PerftestConfiguration {
 
   private val logger: Logger = LoggerFactory.getLogger(classOf[JourneySetup])
 
-  private[simulation] val parts = scala.collection.mutable.MutableList[JourneyPart]()
+  private[simulation] val parts = scala.collection.mutable.ListBuffer[JourneyPart]()
 
   /** Creates JourneyPart which allows to chain HttpRequestBuilder and ActionBuilder.
     *
