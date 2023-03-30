@@ -46,8 +46,13 @@ class PerftestConfigurationSpec extends AnyWordSpec with Matchers {
     }
 
     "read the load percentage" in {
-      perftestConfiguration.loadPercentage shouldBe 1d
+      perftestConfiguration.loadPercentage shouldBe 100
     }
+
+    "read the load factor" in {
+      perftestConfiguration.loadFactor shouldBe 1d
+    }
+
     "read the percentage failure threshold" in {
       perftestConfiguration.percentageFailureThreshold shouldBe 1
     }
@@ -85,8 +90,13 @@ class PerftestConfigurationSpec extends AnyWordSpec with Matchers {
     }
 
     "read the load percentage" in {
-      perftestConfiguration.loadPercentage shouldBe 2.23
+      perftestConfiguration.loadPercentage shouldBe 223
     }
+
+    "read the load factor" in {
+      perftestConfiguration.loadFactor shouldBe 2.23
+    }
+
     "read the percentage failure threshold" in {
       perftestConfiguration.percentageFailureThreshold shouldBe 19
     }

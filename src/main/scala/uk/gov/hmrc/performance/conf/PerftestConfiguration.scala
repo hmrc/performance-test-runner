@@ -24,7 +24,8 @@ trait PerftestConfiguration extends Configuration {
   lazy val rampUpTime: FiniteDuration             = readProperty("perftest.rampupTime", "1").toInt minutes
   lazy val rampDownTime: FiniteDuration           = readProperty("perftest.rampdownTime", "1").toInt minutes
   lazy val constantRateTime: FiniteDuration       = readProperty("perftest.constantRateTime", "5").toInt minutes
-  lazy val loadPercentage: Double                 = readProperty("perftest.loadPercentage", "100").toDouble / 100d
+  lazy val loadPercentage: Int                    = readProperty("perftest.loadPercentage", "100").toInt
+  lazy val loadFactor: Double                     = loadPercentage.toDouble / 100d
   lazy val runSingleUserJourney: Boolean          = readProperty("perftest.runSmokeTest", "false").toBoolean
   lazy val labels: Set[String]                    =
     readPropertyOption("perftest.labels").map(_.split(",").map(_.trim).filter(_.nonEmpty).toSet).getOrElse(Set.empty)

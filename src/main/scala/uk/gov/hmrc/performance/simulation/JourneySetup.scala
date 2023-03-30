@@ -112,7 +112,7 @@ trait JourneySetup extends JourneyConfiguration with PerftestConfiguration {
     *         injected into io.gatling.core.structure.ScenarioBuilder
     */
   protected def withInjectedLoad(journeys: Seq[Journey]): Seq[PopulationBuilder] = journeys.map { scenario =>
-    val load = withAtLeastOneRequestInTheFullTest(scenario.load * loadPercentage)
+    val load = withAtLeastOneRequestInTheFullTest(scenario.load * loadFactor)
 
     val injectionSteps: List[OpenInjectionStep] = List(
       rampUsersPerSec(noLoad).to(load).during(rampUpTime),
