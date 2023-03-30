@@ -99,7 +99,7 @@ trait JourneySetup extends JourneyConfiguration with PerftestConfiguration {
     }
   }
 
-  private def withAtLeasOneRequestInTheFullTest(load: Double) = load match {
+  private def withAtLeastOneRequestInTheFullTest(load: Double) = load match {
     case rate if (constantRateTime.toSeconds * rate).toInt < 1 => 1d / (constantRateTime.toSeconds - 1)
     case rate                                                  => rate
   }
@@ -112,7 +112,7 @@ trait JourneySetup extends JourneyConfiguration with PerftestConfiguration {
     *         injected into io.gatling.core.structure.ScenarioBuilder
     */
   protected def withInjectedLoad(journeys: Seq[Journey]): Seq[PopulationBuilder] = journeys.map { scenario =>
-    val load = withAtLeasOneRequestInTheFullTest(scenario.load * loadPercentage)
+    val load = withAtLeastOneRequestInTheFullTest(scenario.load * loadFactor)
 
     val injectionSteps: List[OpenInjectionStep] = List(
       rampUsersPerSec(noLoad).to(load).during(rampUpTime),
