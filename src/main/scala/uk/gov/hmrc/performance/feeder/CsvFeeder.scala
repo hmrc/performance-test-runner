@@ -64,7 +64,7 @@ class CsvFeeder(feederFile: String)(implicit configuration: GatlingConfiguration
     with ResourceCache {
 
   val regularCsvFeeder: Iterator[Record[String]] = {
-    cachedResource(GatlingFiles.resourcesDirectory(configuration), feederFile) match {
+    cachedResource(GatlingFiles.customResourcesDirectory(configuration), feederFile) match {
       case Success(res)     =>
         withCloseable(FileChannel.open(res.file.toPath)) { channel =>
           CircularIterator(

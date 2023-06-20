@@ -28,7 +28,7 @@ trait HttpConfiguration extends Configuration {
     *
     * Configurations to note:
     *
-    * `True-Client-IP`:  Set to `java.util.Random()` value injected in the Gatling session during JourneySetup.journeys`.
+    * `True-Client-IP`:  Set to `java.util.Random()` value injected in the Gatling session during JourneySetup.journeys.
     * This value can be used to trace requests injected through the performance-test-runner library.
     *
     * `disableFollowRedirect`: Disables Gatling from following redirect automatically.This means the users of the library
