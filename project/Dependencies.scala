@@ -3,7 +3,6 @@ import sbt._
 object Dependencies {
 
   val compile: Seq[ModuleID] = Seq(
-    "com.typesafe.play"    %% "play-json"                 % "2.9.4",
     "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.6.1"
   )
 
