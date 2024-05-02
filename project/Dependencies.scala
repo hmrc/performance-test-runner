@@ -2,8 +2,14 @@ import sbt._
 
 object Dependencies {
 
+  private val gatlingVersion = "3.6.1"
+
+  // The `config` and `gatling-test-framework` libraries are provided so as to be available transitively to services
+  // running performance tests using standard HMRC approach
   val compile: Seq[ModuleID] = Seq(
-    "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.6.1"
+    "com.typesafe"          % "config"                    % "1.4.2",
+    "io.gatling"            % "gatling-test-framework"    % gatlingVersion,
+    "io.gatling.highcharts" % "gatling-charts-highcharts" % gatlingVersion
   )
 
   val test: Seq[ModuleID] = Seq(

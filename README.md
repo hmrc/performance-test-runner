@@ -6,28 +6,19 @@ with preconfigured injection steps, protocols and assertions.
 
 ### Adding to your performance test
 
-#### Compatible versions
-
-Library Version | Scala Version | gatling-version | gatling-sbt plugin
---------------- | ------------- |-----------------| ------------------
-5.6.0           | 2.13          | 3.6.1           | 4.1.5
-
-Gatling version refers to the version of the below Gatling dependencies:
-- gatling-test-framework
-- gatling-charts-highcharts
-
-Add the below dependencies:
-
-```scala
-"uk.gov.hmrc"          %% "performance-test-runner"   % "x.x.x" % Test,
-"io.gatling"            % "gatling-test-framework"    % "x.x.x" % Test,
-"io.gatling.highcharts" % "gatling-charts-highcharts" % "x.x.x" % Test
+Add the below library to your Scala dependencies (e.g. `Dependencies.scala`):
+```
+"uk.gov.hmrc" %% "performance-test-runner" % "6.0.0" % Test
 ```
 
-Add the below plugin:
+Add the below plugin to your `plugins.sbt`:
 ```
-addSbtPlugin("io.gatling" % "gatling-sbt" % "x.x.x")
+addSbtPlugin("io.gatling" % "gatling-sbt" % "4.1.5")
 ```
+
+Your tests will need both the `performance-test-runner` library AND the `gatling-sbt` plugin. This library is available 
+for Scala 2.13 only.
+
 ### Getting started
 
 Refer to the [getting-started](GETTING-STARTED.md) guide for implementing your first simulation.
@@ -53,6 +44,21 @@ To check files have been formatted as expected execute:
 
 [Visit the official Scalafmt documentation to view a complete list of tasks which can be run.](https://scalameta.org/scalafmt/docs/installation.html#task-keys)
 
+
+### Upgrade notes
+
+#### `v6.0.0`
+If you are upgrading to `v6.0.0` of `performance-test-runner`, you can now remove dependencies that previously needed 
+adding manually.
+
+If you are using `v6.0.0` of `performance-test-runner`, you can remove the following from your dependencies
+(e.g. `Dependencies.scala`) as these are now added by the library:
+
+```
+"io.gatling"            % "gatling-test-framework"    % "x.x.x" % Test,
+"io.gatling.highcharts" % "gatling-charts-highcharts" % "x.x.x" % Test,
+"com.typesafe"          % "config"                    % "x.x.x" % Test
+```
 
 #### License
 
