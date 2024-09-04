@@ -1,5 +1,4 @@
 lazy val root = (project in file("."))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
   .settings(
     majorVersion := 6,
     name := "performance-test-runner",
