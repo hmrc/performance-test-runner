@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.performance.feeder
 
-import io.gatling.commons.util.CircularIterator
-import io.gatling.commons.util.Io.withCloseable
 import io.gatling.commons.validation.{Failure, Success}
+import io.gatling.core.Predef.csv
 import io.gatling.core.config.{GatlingConfiguration, GatlingFiles}
-import io.gatling.core.feeder.{Feeder, Record, SeparatedValuesParser}
+import io.gatling.core.feeder
+import io.gatling.core.feeder.Feeder
 import io.gatling.core.util.ResourceCache
 
-import java.nio.channels.FileChannel
 import java.util.concurrent.atomic.AtomicLong
 import scala.util.Random
 
@@ -63,58 +62,49 @@ class CsvFeeder(feederFile: String)(implicit configuration: GatlingConfiguration
     extends Feeder[String]
     with ResourceCache {
 
-  val regularCsvFeeder: Iterator[Record[String]] = {
+  private val randomGenerator = new Random()
+
+  private val ranges: scala.collection.mutable.Map[Int, AtomicLong] = new scala.collection.mutable.HashMap()
+
+  private val rangeRegex = """.*(\$\{range-([\d]+)\}).*""".r
+
+  override def hasNext = true
+
+  private val regularCsvFeeder: Feeder[Any] = {
     cachedResource(GatlingFiles.customResourcesDirectory(configuration), feederFile) match {
-      case Success(res)     =>
-        withCloseable(FileChannel.open(res.file.toPath)) { channel =>
-          CircularIterator(
-            SeparatedValuesParser
-              .stream(columnSeparator = ',', quoteChar = '"', charset = configuration.core.charset)(channel)
-              .toVector,
-            threadSafe = true
-          )
-        }
+      case Success(_)       => csv(feederFile).circular.apply()
       case Failure(message) => throw new IllegalArgumentException(s"Could not locate feeder file; $message")
     }
   }
 
-  private val rng = new Random
-
-  private val ranges: scala.collection.mutable.Map[Int, AtomicLong] = new scala.collection.mutable.HashMap()
-
-  override def hasNext = true
-
-  private val rangeStr = """.*(\$\{range-([\d]+)\}).*"""
-  private val rangeR   = rangeStr.r
-
-  def replaceRange(value: String): String =
+  private def replaceRange(value: String): String =
     value match {
-      case rangeR(range, lengthStr) =>
-        val length = lengthStr.toInt
+      case rangeRegex(_, rangeLength) =>
+        val length = rangeLength.toInt
         if (!ranges.isDefinedAt(length)) ranges += (length -> new AtomicLong(1))
 
         val formatter  = s"%0${length}d"
         val rangeValue = formatter.format(ranges(length).longValue)
 
         value.replaceAll("""\$\{range-""" + length + """\}""", rangeValue)
-      case _                        => value
+      case _                          => value
     }
 
-  def incrementRanges(): Unit =
+  private def incrementRanges(): Unit =
     ranges.foreach { case (r, l) =>
-      if (l.longValue < (math.pow(10, r) - 1)) ranges(r).incrementAndGet
-      else ranges(r).set(1)
+      val maxValue = math.pow(10, r) - 1
+      if (l.longValue < maxValue) ranges(r).incrementAndGet else ranges(r).set(1)
     }
 
   override def next(): Map[String, String] = {
-    val record: Record[String] = regularCsvFeeder.next()
-    val randomInt: String      = Math.abs(rng.nextInt()).toString
-    val now: String            = System.currentTimeMillis().toString
+    val record: feeder.Record[Any] = regularCsvFeeder.next()
+    val randomInt: String          = randomGenerator.nextInt().toString
+    val now: String                = System.currentTimeMillis().toString
     incrementRanges()
 
     record.map { case (k, v) =>
       val vRand: String  = v.toString.replaceAll("""\$\{random\}""", randomInt)
-      val vTime: String  = vRand.toString.replaceAll("""\$\{currentTime\}""", now)
+      val vTime: String  = vRand.replaceAll("""\$\{currentTime\}""", now)
       val vRange: String = replaceRange(vTime)
       (k, vRange)
     }

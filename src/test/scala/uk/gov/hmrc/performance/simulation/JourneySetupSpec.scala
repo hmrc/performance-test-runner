@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.performance.simulation
 
-import io.gatling.core.action.builder.PauseBuilder
+import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.http.request.builder.HttpRequestBuilder
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -37,10 +37,9 @@ class JourneySetupSpec extends AnyWordSpec with Matchers {
   }
 
   class TestActionsSetup extends JourneySetup {
-    val foo: HttpRequestBuilder = http("Get Foo").get(s"/foo")
-    val pause                   = new PauseBuilder(1 milliseconds, None)
-
-    setup("some-id-1", "Some Description 1").withActions(foo, pause)
+    val fooBuilder: HttpRequestBuilder = http("Get Foo").get(s"/foo")
+    val pauseBuilder: ActionBuilder    = pause(Duration(1, MILLISECONDS)).actionBuilders.head
+    setup("some-id-1", "Some Description 1").withActions(fooBuilder, pauseBuilder)
   }
 
   class MalformedTestSetup extends JourneySetup {

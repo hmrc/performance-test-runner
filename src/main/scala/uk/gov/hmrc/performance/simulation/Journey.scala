@@ -21,6 +21,7 @@ import io.gatling.core.action.builder.ActionBuilder
 import io.gatling.core.session.Expression
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
 import io.gatling.http.request.builder.HttpRequestBuilder
+import io.gatling.javaapi.http.HttpRequestActionBuilder
 
 trait Journey {
   val load: Double
@@ -64,7 +65,7 @@ case class JourneyPart(id: String, description: String) {
     * @return JourneyPart for chaining additional requests, actions, and conditional runs
     */
   def withRequests(requests: HttpRequestBuilder*): JourneyPart = {
-    ab ++= requests.map(r => HttpRequestBuilder.toActionBuilder(r))
+    ab ++= requests.map(r => new HttpRequestActionBuilder(r).asScala())
     this
   }
 
