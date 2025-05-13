@@ -60,6 +60,10 @@ If you are using `v6.0.0` of `performance-test-runner`, you can remove the follo
 "com.typesafe"          % "config"                    % "x.x.x" % Test
 ```
 
+### v6.2.0
+If you are upgrading to `v6.2.0` of `performance-test-runner`, you will need to ensure your `gatling-sbt` plugin 
+version is greater than `4.2.0`.
+
 #### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
