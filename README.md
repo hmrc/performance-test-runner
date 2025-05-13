@@ -54,7 +54,7 @@ adding manually.
 If you are using `v6.0.0` of `performance-test-runner`, you can remove the following from your dependencies
 (e.g. `Dependencies.scala`) as these are now added by the library:
 
-```
+```sbt
 "io.gatling"            % "gatling-test-framework"    % "x.x.x" % Test,
 "io.gatling.highcharts" % "gatling-charts-highcharts" % "x.x.x" % Test,
 "com.typesafe"          % "config"                    % "x.x.x" % Test
@@ -63,6 +63,15 @@ If you are using `v6.0.0` of `performance-test-runner`, you can remove the follo
 ### v6.2.0
 If you are upgrading to `v6.2.0` of `performance-test-runner`, you will need to ensure your `gatling-sbt` plugin 
 version is greater or equal to `4.2.0`.
+
+If you are using CheckBuilder in your performance tests, you would previously have passed in three parameters:
+```scala
+    CheckBuilder[HttpStatusCheckType, Response, Int]
+```
+CheckBuilder now only expects two parameters:
+```scala
+    CheckBuilder[HttpStatusCheckType, Response]
+```
 
 #### License
 
