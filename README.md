@@ -62,7 +62,7 @@ If you are using `v6.0.0` of `performance-test-runner`, you can remove the follo
 
 ### v6.2.0
 If you are upgrading to `v6.2.0` of `performance-test-runner`, you will need to ensure your `gatling-sbt` plugin 
-version is greater than `4.2.0`.
+version is greater or equal to `4.2.0`.
 
 #### License
 
