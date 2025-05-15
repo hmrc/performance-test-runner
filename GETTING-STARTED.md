@@ -294,6 +294,18 @@ setup("home-page", "Home Page") withRequests navigateToHomePage withActions(prin
 Below, you can find ways to use some common Gatling functions with performance-test-runner.
 
 #### Creating a custom user feeder
+
+> [!NOTE]
+> Before you create a custom feeder, check if Gatling already provides a suitable random generator function for your use case.
+>
+> Gatling 3.9.0 introduced the following random generators: 
+>- randomUUID, 
+>- randomSecureUuid,
+>- randomAlphanumeric,
+>- randomInt,
+>- randomLong,
+>- randomDouble,
+
 The `CSV` user feeder described above should be sufficient for most data driven tests. When `CSV` feeder is not sufficient, custom feeders can be
 created.
 
