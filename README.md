@@ -90,6 +90,9 @@ These are provided out of the box, you can use them like this in a Gatling expre
 FeederBuilderBase<T> now has access to a `recordsCount` method, so you do not need to do any extra work in Scala to
 get the length of the records.
 
+#### Pebble Extensions
+As part of Gatling 3.9, Pebble has been upgraded to version 3.2.0. If you are using custom pebble extensions, you will need to change the import package from `com.mitchellbosecke` to `io.pebbletemplates`.
+
 #### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
