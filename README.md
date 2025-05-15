@@ -62,7 +62,7 @@ If you are using `v6.0.0` of `performance-test-runner`, you can remove the follo
 
 ### v6.2.0
 If you are upgrading to `v6.2.0` of `performance-test-runner`, you will need to ensure your `gatling-sbt` plugin 
-version is greater or equal to `4.2.0`.
+version is greater or equal to `4.2.6`.
 
 If you are using CheckBuilder in your performance tests, you would previously have passed in three parameters:
 ```scala
@@ -72,6 +72,23 @@ CheckBuilder now only expects two parameters:
 ```scala
     CheckBuilder[HttpStatusCheckType, Response]
 ```
+
+### New features introduced in Gatling 3.9.0
+Gatling Expression Language (EL) has introduced new random generator functions:
+- randomUUID()
+- randomSecureUuid()
+- randomAlphanumeric()
+- randomInt()
+- randomLong()
+- randomDouble()
+
+These are provided out of the box, you can use them like this in a Gatling expression:
+```
+#{randomInt()}
+```
+
+FeederBuilderBase<T> now has access to a `recordsCount` method, so you do not need to do any extra work in Scala to
+get the length of the records.
 
 #### License
 
