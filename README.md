@@ -62,7 +62,10 @@ If you are using `v6.0.0` of `performance-test-runner`, you can remove the follo
 
 ### v6.2.0
 If you are upgrading to `v6.2.0` of `performance-test-runner`, you will need to ensure your `gatling-sbt` plugin 
-version is greater or equal to `4.2.6`.
+version is greater or equal to `4.2.6`. 
+
+You will also need to ensure you are using Java 11 or greater and if you're using `slf4j` in your project, 
+make sure it is greater than 2.0.0.
 
 If you are using CheckBuilder in your performance tests, you would previously have passed in three parameters:
 ```scala

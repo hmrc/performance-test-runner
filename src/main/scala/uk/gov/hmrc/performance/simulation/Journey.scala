@@ -109,7 +109,7 @@ case class JourneyPart(id: String, description: String) {
     * @return JourneyPart
     */
   def toRunIf(sessionKey: Expression[String], value: String): JourneyPart = {
-    conditionallyRun = doIfEquals(sessionKey, value)
+    conditionallyRun = cb => doIfEquals(sessionKey, value)(cb)
     this
   }
 }

@@ -33,7 +33,7 @@ class JourneySetupSpec extends AnyWordSpec with Matchers {
     val bar: HttpRequestBuilder = http("Get Bar").get(s"/bar")
 
     setup("some-id-1", "Some Description 1").withRequests(foo, bar)
-    setup("some-id-2", "Some Description 2").withRequests(bar).toRunIf("", "")
+    setup("some-id-2", "Some Description 2").withRequests(bar)
   }
 
   class TestActionsSetup extends JourneySetup {
