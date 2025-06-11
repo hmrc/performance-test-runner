@@ -22,7 +22,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class CsvFeederSpec extends AnyWordSpec with Matchers {
 
-  implicit val configuration = GatlingConfiguration.loadForTest()
+  implicit val configuration: io.gatling.core.config.GatlingConfiguration = GatlingConfiguration.loadForTest()
 
   "The feeder" should {
 

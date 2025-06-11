@@ -18,7 +18,7 @@ package uk.gov.hmrc.performance.feeder
 
 import io.gatling.commons.validation.{Failure, Success}
 import io.gatling.core.Predef.csv
-import io.gatling.core.config.{DirectoryConfiguration, GatlingConfiguration, GatlingFiles}
+import io.gatling.core.config.GatlingConfiguration
 import io.gatling.core.feeder
 import io.gatling.core.feeder.Feeder
 import io.gatling.core.util.ResourceCache
@@ -70,10 +70,8 @@ class CsvFeeder(feederFile: String)(implicit configuration: GatlingConfiguration
 
   override def hasNext = true
 
-  private implicit val directoryConfiguration: DirectoryConfiguration = configuration.core.directory
-
   private val regularCsvFeeder: Feeder[Any] = {
-    cachedResource(GatlingFiles.customResourcesDirectory(directoryConfiguration), feederFile) match {
+    cachedResource(feederFile) match {
       case Success(_)       => csv(feederFile).circular.apply()
       case Failure(message) => throw new IllegalArgumentException(s"Could not locate feeder file; $message")
     }
