@@ -76,7 +76,7 @@ CheckBuilder now only expects two parameters:
     CheckBuilder[HttpStatusCheckType, Response]
 ```
 
-### New features introduced in Gatling 3.9.0
+#### New Gatling Expression Language Features
 Gatling Expression Language (EL) has introduced new random generator functions:
 - randomUUID()
 - randomSecureUuid()
@@ -92,6 +92,9 @@ These are provided out of the box, you can use them like this in a Gatling expre
 
 FeederBuilderBase<T> now has access to a `recordsCount` method, so you do not need to do any extra work in Scala to
 get the length of the records.
+
+### Gatling Expression Language syntax change from ${} to #{}
+If you use the Gatling Expression Language, due to the clashes with Scala string interpolation, Gatling has been updated to utilise `#{}` as the format for defining expressions.
 
 #### Pebble Extensions
 As part of Gatling 3.9, Pebble has been upgraded to version 3.2.0. If you are using custom pebble extensions, you will need to change the import package from `com.mitchellbosecke` to `io.pebbletemplates`.
