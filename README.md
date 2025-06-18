@@ -99,6 +99,10 @@ If you use the Gatling Expression Language, due to the clashes with Scala string
 #### Pebble Extensions
 As part of Gatling 3.9, Pebble has been upgraded to version 3.2.0. If you are using custom pebble extensions, you will need to change the import package from `com.mitchellbosecke` to `io.pebbletemplates`.
 
+### Scala 3 Considerations
+
+// TODO!
+
 #### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").

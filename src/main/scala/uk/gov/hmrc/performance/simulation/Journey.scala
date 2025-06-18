@@ -108,7 +108,7 @@ case class JourneyPart(id: String, description: String) {
     * @param value the expected value to compare.
     * @return JourneyPart
     */
-  def toRunIf(sessionKey: Expression[String], value: String): JourneyPart = {
+  def toRunIf(sessionKey: Expression[String], value: Expression[String]): JourneyPart = {
     conditionallyRun = cb => doIfEquals(sessionKey, value)(cb)
     this
   }

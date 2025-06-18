@@ -93,7 +93,7 @@ trait JourneySetup extends JourneyConfiguration with PerftestConfiguration {
             .exitBlockOnFail(exec(chain))
         }
 
-        override lazy val load: Double = conf.load
+        override val load: Double = conf.load
       }
 
     }
