@@ -100,8 +100,11 @@ If you use the Gatling Expression Language, due to the clashes with Scala string
 As part of Gatling 3.9, Pebble has been upgraded to version 3.2.0. If you are using custom pebble extensions, you will need to change the import package from `com.mitchellbosecke` to `io.pebbletemplates`.
 
 ### Scala 3 Considerations
+If you're using the scala 3 build of performance-test-runner, you may need to wrap your `Expression[T]` strings in `StaticValueExpression`, e.g `StaticValueExpression("your-string"). You will need to import this from `gatling.core.session`:
 
-// TODO!
+```scala
+import io.gatling.core.session.StaticValueExpression
+```
 
 #### License
 
