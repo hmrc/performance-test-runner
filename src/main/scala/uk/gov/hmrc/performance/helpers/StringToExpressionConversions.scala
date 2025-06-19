@@ -19,8 +19,7 @@ package uk.gov.hmrc.performance.helpers
 import io.gatling.commons.validation._
 import io.gatling.core.session.Expression
 
-import scala.language.implicitConversions
-
-extension (s: String)
-    def asExpressionAny: Expression[Any] = _ => s.success
-    def asExpressionCharSeq: Expression[CharSequence] = _ => s.success
+object StringToExpressionConversions {
+    def asExpressionAny(s: String): Expression[Any] = _ => s.success
+    def asExpressionCharSeq(s: String): Expression[CharSequence] = _ => s.success
+}
