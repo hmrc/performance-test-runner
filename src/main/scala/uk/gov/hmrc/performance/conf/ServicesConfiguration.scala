@@ -21,11 +21,11 @@ trait ServicesConfiguration extends Configuration {
   private def urlFor(protocol: String, host: String, port: String) =
     if (port.toInt == 80 || port.toInt == 443) s"$protocol://$host" else s"$protocol://$host:$port"
 
-  /**
-    * Returns a baseUrl for the provided serviceName based on the serviceName configuration in
-    * `services.conf` or services-local.conf` when running locally.
+  /** Returns a baseUrl for the provided serviceName based on the serviceName configuration in `services.conf` or
+    * services-local.conf` when running locally.
     * @param serviceName
-    * @return baseUrl for the service as a String.
+    * @return
+    *   baseUrl for the service as a String.
     */
   def baseUrlFor(serviceName: String): String = {
     val protocol = readProperty(s"services.$serviceName.protocol", "")

@@ -20,8 +20,7 @@ trait JourneyConfiguration extends Configuration {
 
   val allJourneys: List[String] = keys("journeys")
 
-  val journeysAvailable: List[String] = {
-
+  val journeysAvailable: List[String] =
     if (!hasProperty("journeysToRun")) allJourneys
     else {
       val values = readPropertyList("journeysToRun")
@@ -29,18 +28,19 @@ trait JourneyConfiguration extends Configuration {
       values.foreach((id: String) => checkJourneyName(id))
       values
     }
-  }
 
   def checkJourneyName(id: String): Any =
     if (!allJourneys.contains(id))
       throw new RuntimeException(s"The test is configured to run '$id' but it couldn't be found in journeys.conf")
 
-  /** Maps the journeys defined in journeys.conf to a Seq of
-    *  [[uk.gov.hmrc.performance.conf.JourneyDefinition]] and returns the journeys to be executed
-    *  based on the provided labels. The `labels` field is defined in application.conf.
+  /** Maps the journeys defined in journeys.conf to a Seq of [[uk.gov.hmrc.performance.conf.JourneyDefinition]] and
+    * returns the journeys to be executed based on the provided labels. The `labels` field is defined in
+    * application.conf.
     *
-    * @param labels An optional parameter with a Set of labels for which the journeys should be executed.
-    * @return Seq of JourneyDefinition to be executed for the provided labels.
+    * @param labels
+    *   An optional parameter with a Set of labels for which the journeys should be executed.
+    * @return
+    *   Seq of JourneyDefinition to be executed for the provided labels.
     */
   def definitions(labels: Set[String] = Set.empty): Seq[JourneyDefinition] = {
     val journeyDefinitions = journeysAvailable
@@ -78,10 +78,14 @@ trait JourneyConfiguration extends Configuration {
     *
     * `Hello world journey 4 - runIf [label-B] and skipIf [label-A,label-C]`
     *
-    * @param journeyDescription Value from the description field of a journey in journeys.conf
-    * @param runIf Labels included in run-if field of a journey in journeys.conf
-    * @param skipIf Labels included in skip-if field of a journey in journeys.conf
-    * @return A new description based on the description and the labels
+    * @param journeyDescription
+    *   Value from the description field of a journey in journeys.conf
+    * @param runIf
+    *   Labels included in run-if field of a journey in journeys.conf
+    * @param skipIf
+    *   Labels included in skip-if field of a journey in journeys.conf
+    * @return
+    *   A new description based on the description and the labels
     */
   def generateDescription(journeyDescription: String, runIf: Set[String], skipIf: Set[String]): String = {
     val runIfDescription  = if (runIf.nonEmpty) "runIf " + s"[${runIf.mkString(",")}]" else ""
@@ -103,11 +107,13 @@ case class JourneyDefinition(
   skipIf: Set[String] = Set.empty
 ) {
 
-  /** Checks the run-if and skip-if labels that have been defined within journeys.conf
-    * for a journey to determine if it has been configured correctly and should be executed.
+  /** Checks the run-if and skip-if labels that have been defined within journeys.conf for a journey to determine if it
+    * has been configured correctly and should be executed.
     *
-    * @param testLabels Set of labels as defined in application.conf
-    * @return Boolean, whether it should be executed
+    * @param testLabels
+    *   Set of labels as defined in application.conf
+    * @return
+    *   Boolean, whether it should be executed
     */
   def shouldRun(testLabels: Set[String]): Boolean = {
     if (runIf.intersect(skipIf).nonEmpty)

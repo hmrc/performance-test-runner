@@ -36,10 +36,13 @@ trait JourneySetup extends JourneyConfiguration with PerftestConfiguration {
 
   /** Creates JourneyPart which allows to chain HttpRequestBuilder and ActionBuilder.
     *
-    * @param id Unique identifier for the setup. This should match an entry in the parts provided in journeys.conf
-    * @param description description of the setup. This value is used in Gatling's scenario description which is
-    *                    surfaced in gatling report.
-    * @return JourneyPart
+    * @param id
+    *   Unique identifier for the setup. This should match an entry in the parts provided in journeys.conf
+    * @param description
+    *   description of the setup. This value is used in Gatling's scenario description which is surfaced in gatling
+    *   report.
+    * @return
+    *   JourneyPart
     */
   def setup(id: String, description: String): JourneyPart = {
 
@@ -48,9 +51,9 @@ trait JourneySetup extends JourneyConfiguration with PerftestConfiguration {
     part
   }
 
-  /**
-    * Builds uk.gov.hmrc.performance.simulation.Journey for each journey defined in journeys.conf
-    * @return a Seq of uk.gov.hmrc.performance.simulation.Journey for all the journeys defined in journeys.conf
+  /** Builds uk.gov.hmrc.performance.simulation.Journey for each journey defined in journeys.conf
+    * @return
+    *   a Seq of uk.gov.hmrc.performance.simulation.Journey for all the journeys defined in journeys.conf
     */
   protected def journeys: Seq[Journey] = {
 
@@ -104,12 +107,14 @@ trait JourneySetup extends JourneyConfiguration with PerftestConfiguration {
     case rate                                                  => rate
   }
 
-  /** Calculates the load for the provided journeys and constructs the injection steps using
-    * Gatling's open injection model: https://gatling.io/docs/current/general/simulation_setup/#open-model.
+  /** Calculates the load for the provided journeys and constructs the injection steps using Gatling's open injection
+    * model: https://gatling.io/docs/current/general/simulation_setup/#open-model.
     *
-    * @param journeys Seq of journeys as defined in journeys.conf
-    * @return Sequence of PopulationBuilder with calculated injection step
-    *         injected into io.gatling.core.structure.ScenarioBuilder
+    * @param journeys
+    *   Seq of journeys as defined in journeys.conf
+    * @return
+    *   Sequence of PopulationBuilder with calculated injection step injected into
+    *   io.gatling.core.structure.ScenarioBuilder
     */
   protected def withInjectedLoad(journeys: Seq[Journey]): Seq[PopulationBuilder] = journeys.map { scenario =>
     val load = withAtLeastOneRequestInTheFullTest(scenario.load * loadFactor)

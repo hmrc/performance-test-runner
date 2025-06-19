@@ -33,14 +33,16 @@ import scala.util.Random
   * {{{
   * username,password
   * bob,12345678
-  * alice,87654321}}}
+  * alice,87654321
+  * }}}
   *
   * The provided CSV can also contain placeholders to generate dynamic data from a single record.
   *
   * Example with random placeholder:
   * {{{
   * username,password
-  * my-${random}-user,12345678}}}
+  * my-${random}-user,12345678
+  * }}}
   *
   * In the above CSV, `${random}` is replaced with a random int value
   *
@@ -50,12 +52,15 @@ import scala.util.Random
   *
   * ${range-X} - replaced by a string representation of number made of X digits.
   *
-  * The number is incremental and starts from 1 again when it reaches the max value.
-  * For example ${range-3} will be replaced with '001' the first time, '002' the next and so on.
+  * The number is incremental and starts from 1 again when it reaches the max value. For example ${range-3} will be
+  * replaced with '001' the first time, '002' the next and so on.
   *
-  * @constructor creates a new feeder from a CSV file
-  * @param feederFile name of the feeder file with directory. Example: data/helloworld.csv.
-  * @param configuration GatlingConfiguration provided implicitly
+  * @constructor
+  *   creates a new feeder from a CSV file
+  * @param feederFile
+  *   name of the feeder file with directory. Example: data/helloworld.csv.
+  * @param configuration
+  *   GatlingConfiguration provided implicitly
   */
 
 class CsvFeeder(feederFile: String)(implicit configuration: GatlingConfiguration)
@@ -70,12 +75,11 @@ class CsvFeeder(feederFile: String)(implicit configuration: GatlingConfiguration
 
   override def hasNext = true
 
-  private val regularCsvFeeder: Feeder[Any] = {
+  private val regularCsvFeeder: Feeder[Any] =
     cachedResource(feederFile) match {
       case Success(_)       => csv(feederFile).circular.apply()
       case Failure(message) => throw new IllegalArgumentException(s"Could not locate feeder file; $message")
     }
-  }
 
   private def replaceRange(value: String): String =
     value match {

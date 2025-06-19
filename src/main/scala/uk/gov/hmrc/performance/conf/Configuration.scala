@@ -29,12 +29,11 @@ trait Configuration {
 
   lazy val runLocal: Boolean = !defaultConfig.hasPath("runLocal") || defaultConfig.getBoolean("runLocal")
 
-  lazy val applicationConfig: Config = {
+  lazy val applicationConfig: Config =
     if (runLocal)
       defaultConfig.withFallback(ConfigFactory.load("services-local"))
     else
       defaultConfig.withFallback(ConfigFactory.load("services"))
-  }
 
   def hasProperty(property: String): Boolean = applicationConfig.hasPath(property)
 

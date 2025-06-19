@@ -21,7 +21,7 @@ import org.slf4j.{Logger, LoggerFactory}
 import uk.gov.hmrc.performance.conf.HttpConfiguration
 
 /** Trait extending `io.gatling.core.scenario.Simulation`. Use within a performance test to set up Journeys and invoke
-  *  `runSimulation()`, a method to configure the Simulation setup.
+  * `runSimulation()`, a method to configure the Simulation setup.
   */
 
 trait PerformanceTestRunner extends Simulation with HttpConfiguration with JourneySetup {
@@ -30,15 +30,15 @@ trait PerformanceTestRunner extends Simulation with HttpConfiguration with Journ
 
   /** Configures `io.gatling.core.scenario.Simulation.setUp`. This method is invoked from within a performance test.
     *
-    * For smoke tests i.e when `uk.gov.hmrc.performance.conf.PerftestConfiguration.runSingleUserJourney`` is `true`,
-    * the setUp is configured to run only for 1 user.
+    * For smoke tests i.e when `uk.gov.hmrc.performance.conf.PerftestConfiguration.runSingleUserJourney`` is `true`, the
+    * setUp is configured to run only for 1 user.
     *
     * For a full test, the setUp is configured with:
     *
-    *  - Journeys and the load to run
-    *  - Duration of the run
-    *  - Protocol configuration and
-    *  - Assertions
+    *   - Journeys and the load to run
+    *   - Duration of the run
+    *   - Protocol configuration and
+    *   - Assertions
     */
   def runSimulation(): Unit = {
 
