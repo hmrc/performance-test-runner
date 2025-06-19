@@ -18,7 +18,7 @@ package uk.gov.hmrc.performance.simulation
 
 import io.gatling.core.Predef._
 import io.gatling.core.action.builder.ActionBuilder
-import io.gatling.core.session.Expression
+import io.gatling.core.session.{Expression, StaticValueExpression}
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
 import io.gatling.http.request.builder.HttpRequestBuilder
 import io.gatling.javaapi.http.HttpRequestActionBuilder
@@ -118,8 +118,8 @@ case class JourneyPart(id: String, description: String) {
     * @return
     *   JourneyPart
     */
-  def toRunIf(sessionKey: Expression[String], value: Expression[String]): JourneyPart = {
-    conditionallyRun = cb => doIfEquals(sessionKey, value)(cb)
+  def toRunIf(sessionKey: Expression[String], value: String): JourneyPart = {
+    conditionallyRun = cb => doIfEquals(sessionKey, StaticValueExpression(value))(cb)
     this
   }
 }
