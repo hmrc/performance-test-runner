@@ -18,9 +18,10 @@ package uk.gov.hmrc.performance.simulation
 
 import io.gatling.core.Predef._
 import io.gatling.core.action.builder.ActionBuilder
-import io.gatling.core.session.Expression
+import io.gatling.core.session.{Expression, StaticValueExpression}
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
 import io.gatling.http.request.builder.HttpRequestBuilder
+import io.gatling.javaapi.http.HttpRequestActionBuilder
 
 trait Journey {
   val load: Double
@@ -28,16 +29,18 @@ trait Journey {
   def builder: ScenarioBuilder
 }
 
-/** Used to constructs parts of a Journey as listed in journeys.conf. The JourneyPart is defined within a performance test using
-  * uk.gov.hmrc.performance.simulation.JourneySetup.setup.
+/** Used to constructs parts of a Journey as listed in journeys.conf. The JourneyPart is defined within a performance
+  * test using uk.gov.hmrc.performance.simulation.JourneySetup.setup.
   *
   * To create a JourneyPart with uk.gov.hmrc.performance.simulation.JourneySetup.setup:
   * {{{
   * setup("login", "Login") withRequests (navigateToLoginPage, submitLogin)
   * }}}
   *
-  * @param id A unique id which should match the parts listed in journeys.conf
-  * @param description Description of the journey part surfaced in the gatling report.
+  * @param id
+  *   A unique id which should match the parts listed in journeys.conf
+  * @param description
+  *   Description of the journey part surfaced in the gatling report.
   */
 case class JourneyPart(id: String, description: String) {
 
@@ -49,7 +52,8 @@ case class JourneyPart(id: String, description: String) {
     *
     * Applies [[conditionallyRun]] when a condition is specified in JourneyPart using [[toRunIf]].
     *
-    * @return Requests and Actions of the JourneyPart as a `ChainBuilder`
+    * @return
+    *   Requests and Actions of the JourneyPart as a `ChainBuilder`
     */
   def builder: ChainBuilder =
     if (ab.isEmpty) throw new scala.IllegalArgumentException(s"'$id' must have at least one request")
@@ -60,11 +64,13 @@ case class JourneyPart(id: String, description: String) {
     * setup("login-page", "Navigate to login page") withRequests navigateToLoginPage
     * }}}
     *
-    * @param requests of type `HttpRequestBuilder`
-    * @return JourneyPart for chaining additional requests, actions, and conditional runs
+    * @param requests
+    *   of type `HttpRequestBuilder`
+    * @return
+    *   JourneyPart for chaining additional requests, actions, and conditional runs
     */
   def withRequests(requests: HttpRequestBuilder*): JourneyPart = {
-    ab ++= requests.map(r => HttpRequestBuilder.toActionBuilder(r))
+    ab ++= requests.map(r => new HttpRequestActionBuilder(r).asScala())
     this
   }
 
@@ -75,23 +81,25 @@ case class JourneyPart(id: String, description: String) {
     * val pause = new PauseBuilder(10 milliseconds, None)
     * setup("pause-action", "pauses for 10 milliseconds") withActions(pause)
     * }}}
-    *  Since, HttpRequestBuilder is also an ActionBuilder, these can be chained together.
+    * Since, HttpRequestBuilder is also an ActionBuilder, these can be chained together.
     *
-    *  In the below example `navigateToLoginPage` and `submitLogin` are of type `HttpRequestBuilder`
+    * In the below example `navigateToLoginPage` and `submitLogin` are of type `HttpRequestBuilder`
     * {{{
     * val pause = new PauseBuilder(1 milliseconds, None)
     * setup("login", "Login") withActions(navigateToLoginPage, pause, submitLogin)
     * }}}
     *
-    *  To include a ChainBuilder, use `.actionBuilders` to covert it into a `List[ActionBuilder]` and pass it to
-    *  withActions as below.
+    * To include a ChainBuilder, use `.actionBuilders` to covert it into a `List[ActionBuilder]` and pass it to
+    * withActions as below.
     *
-    *  In the below example, `sessionSetup` is of type `List[ActionBuilder]`
+    * In the below example, `sessionSetup` is of type `List[ActionBuilder]`
     * {{{
     * setup("session-setup", "Setting Session Value") withActions(sessionSetup:_*)
     * }}}
-    * @param actions of type `ActionBuilder`
-    * @return JourneyPart for chaining additional requests, actions, and conditional runs
+    * @param actions
+    *   of type `ActionBuilder`
+    * @return
+    *   JourneyPart for chaining additional requests, actions, and conditional runs
     */
 
   def withActions(actions: ActionBuilder*): JourneyPart = {
@@ -99,16 +107,19 @@ case class JourneyPart(id: String, description: String) {
     this
   }
 
-  /** Checks whether to run a setup step depending on whether the actual sessionKey value
-    *  matches the expected value. The expected value can also be a Gatling sessionKey as the underlying
-    *  doIfEquals method implicitly converts it into an Expression[Any].
+  /** Checks whether to run a setup step depending on whether the actual sessionKey value matches the expected value.
+    * The expected value can also be a Gatling sessionKey as the underlying doIfEquals method implicitly converts it
+    * into an Expression[Any].
     *
-    * @param sessionKey the sessionKey to obtain the actual value.
-    * @param value the expected value to compare.
-    * @return JourneyPart
+    * @param sessionKey
+    *   the sessionKey to obtain the actual value.
+    * @param value
+    *   the expected value to compare.
+    * @return
+    *   JourneyPart
     */
   def toRunIf(sessionKey: Expression[String], value: String): JourneyPart = {
-    conditionallyRun = doIfEquals(sessionKey, value)
+    conditionallyRun = cb => doIfEquals(sessionKey, StaticValueExpression(value))(cb)
     this
   }
 }

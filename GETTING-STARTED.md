@@ -112,8 +112,8 @@ object HelloWorldRequests extends ServicesConfiguration {
   def submitLogin = {
     http("Submit username and password")
       .post(s"$baseUrl/login": String)
-      .formParam("userId", "${username}")
-      .formParam("password", "${password}")
+      .formParam("userId", "#{username}")
+      .formParam("password", "#{password}")
       .check(status.is(303))
       .check(header("Location").is("/home"))
   }
@@ -246,13 +246,13 @@ For example, the above `CSV` file can be configured with a `random` placeholder 
 placeholder will be replaced by a random number for every user. 
 ```csv
 username,password
-my-${random}-user,12345678
+my-#{random}-user,12345678
 ```
 The available placeholders are:<br>
-`${random}` is replaced with a random int value<br>
-`${currentTime}` is replaced with the current time in milliseconds<br>
-`${range-X}` is replaced by a string representation of number made of X digits. The number is incremental and starts 
-from 1 again when it reaches the max value. For example ${range-3} will be replaced with '001' the first time, '002' 
+`#{random}` is replaced with a random int value<br>
+`#{currentTime}` is replaced with the current time in milliseconds<br>
+`#{range-X}` is replaced by a string representation of number made of X digits. The number is incremental and starts 
+from 1 again when it reaches the max value. For example #{range-3} will be replaced with '001' the first time, '002' 
 the next and so on.
 
 ### Using Gatling's Exec method with performance-test-runner
@@ -294,6 +294,18 @@ setup("home-page", "Home Page") withRequests navigateToHomePage withActions(prin
 Below, you can find ways to use some common Gatling functions with performance-test-runner.
 
 #### Creating a custom user feeder
+
+> [!NOTE]
+> Before you create a custom feeder, check if Gatling already provides a suitable random generator function for your use case.
+>
+> Gatling 3.9.0 introduced the following random generators: 
+>- randomUUID, 
+>- randomSecureUuid,
+>- randomAlphanumeric,
+>- randomInt,
+>- randomLong,
+>- randomDouble,
+
 The `CSV` user feeder described above should be sufficient for most data driven tests. When `CSV` feeder is not sufficient, custom feeders can be
 created.
 
@@ -316,7 +328,7 @@ The value then can be extracted using Gatling's [Expression Language](https://ga
  def submitUniqueId = {
     http("Submit unique id")
       .post(s"$baseUrl/some-endpoint": String)
-      .formParam("uniqueId", "${uuid}")
+      .formParam("uniqueId", "#{uuid}")
   }
 ```
 
@@ -413,7 +425,7 @@ In the below example, the `post-vat-return-period` setup will be run only if the
 for the sessionKey `check-status`.
 
 ```scala
-setup("post-vat-return-period", "Post vat return period") withRequests postVatReturnPeriod toRunIf("${check-status}", "200")
+setup("post-vat-return-period", "Post vat return period") withRequests postVatReturnPeriod toRunIf("#{check-status}", "200")
 ```
 
 **Note:**

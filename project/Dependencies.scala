@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
 
-  private val gatlingVersion = "3.6.1"
+  private val gatlingVersion = "3.13.5"
 
   // The `config` and `gatling-test-framework` libraries are provided so as to be available transitively to services
   // running performance tests using standard HMRC approach

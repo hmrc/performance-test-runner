@@ -54,10 +54,56 @@ adding manually.
 If you are using `v6.0.0` of `performance-test-runner`, you can remove the following from your dependencies
 (e.g. `Dependencies.scala`) as these are now added by the library:
 
-```
+```sbt
 "io.gatling"            % "gatling-test-framework"    % "x.x.x" % Test,
 "io.gatling.highcharts" % "gatling-charts-highcharts" % "x.x.x" % Test,
 "com.typesafe"          % "config"                    % "x.x.x" % Test
+```
+
+### v6.2.0
+If you are upgrading to `v6.2.0` of `performance-test-runner`, you will need to ensure your `gatling-sbt` plugin 
+version is greater or equal to `4.2.6`. 
+
+You will also need to ensure you are using Java 11 or greater and if you're using `slf4j` in your project, 
+make sure it is greater than 2.0.0.
+
+If you are using CheckBuilder in your performance tests, you would previously have passed in three parameters:
+```scala
+    CheckBuilder[HttpStatusCheckType, Response, Int]
+```
+CheckBuilder now only expects two parameters:
+```scala
+    CheckBuilder[HttpStatusCheckType, Response]
+```
+
+#### New Gatling Expression Language Features
+Gatling Expression Language (EL) has introduced new random generator functions:
+- randomUUID()
+- randomSecureUuid()
+- randomAlphanumeric()
+- randomInt()
+- randomLong()
+- randomDouble()
+
+These are provided out of the box, you can use them like this in a Gatling expression:
+```
+#{randomInt()}
+```
+
+FeederBuilderBase<T> now has access to a `recordsCount` method, so you do not need to do any extra work in Scala to
+get the length of the records.
+
+### Gatling Expression Language syntax change from ${} to #{}
+If you use the Gatling Expression Language, due to the clashes with Scala string interpolation, Gatling has been updated to utilise `#{}` as the format for defining expressions.
+
+#### Pebble Extensions
+As part of Gatling 3.9, Pebble has been upgraded to version 3.2.0. If you are using custom pebble extensions, you will need to change the import package from `com.mitchellbosecke` to `io.pebbletemplates`.
+
+### Scala 3 Considerations
+If you're using the scala 3 build of performance-test-runner, you may need to wrap your `Expression[T]` strings in `StaticValueExpression`, e.g `StaticValueExpression("your-string"). You will need to import this from `gatling.core.session`:
+
+```scala
+import io.gatling.core.session.StaticValueExpression
 ```
 
 #### License
