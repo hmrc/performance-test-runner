@@ -403,7 +403,7 @@ def getTurnoverPage: List[ActionBuilder] = {
   asLongAs(session => 
     !session.attributes.get("turnOverPageStatus").contains(200)) {
     exec(http("Get Turnover Page")
-      .get(s"$baseUrl$${turnOverPage}": String)
+      .get(s"$baseUrl#{turnOverPage}": String)
       .check(status.saveAs("turnOverPageStatus")))
   }.actionBuilders
 }
