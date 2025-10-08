@@ -344,10 +344,10 @@ import scala.concurrent.duration._
 import io.gatling.core.Predef._  
 
 class HelloWorldSimulation extends PerformanceTestRunner {
+
+  val pauseTest = pause(6000 milliseconds).actionBuilders.last
   
-  val pause = new PauseBuilder(1 milliseconds, None)
-  
-  setup("login", "Login") withActions(navigateToLoginPage, pause, submitLogin)
+  setup("login", "Login") withActions(navigateToLoginPage, pauseTest, submitLogin)
 
   runSimulation()
 }

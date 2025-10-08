@@ -8,12 +8,12 @@ with preconfigured injection steps, protocols and assertions.
 
 Add the below library to your Scala dependencies (e.g. `Dependencies.scala`):
 ```
-"uk.gov.hmrc" %% "performance-test-runner" % "6.1.0" % Test
+"uk.gov.hmrc" %% "performance-test-runner" % "6.3.0" % Test
 ```
 
 Add the below plugin to your `plugins.sbt`:
 ```
-addSbtPlugin("io.gatling" % "gatling-sbt" % "4.9.2")
+addSbtPlugin("io.gatling" % "gatling-sbt" % "4.15.0")
 ```
 
 Your tests will need both the `performance-test-runner` library AND the `gatling-sbt` plugin. This library is available 
