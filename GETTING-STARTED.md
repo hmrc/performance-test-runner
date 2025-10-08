@@ -87,7 +87,7 @@ class HelloWorldSimulation extends PerformanceTestRunner {
 ```
 
 ### Implementing the HTTP requests
-The individual requests included in the setup are implemented with Gatling's [HTTP DSL](https://gatling.io/docs/current/http/http_request/).
+The individual requests included in the setup are implemented with Gatling's [HTTP DSL](https://docs.gatling.io/reference/script/http/request/).
 
 ```scala
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
@@ -184,7 +184,7 @@ services {
 ```
 
 #### gatling.conf
-Contains [Gatling specific configuration](https://gatling.io/docs/current/general/configuration/#gatling-conf).
+Contains [Gatling specific configuration](https://docs.gatling.io/concepts/configuration/#gatling-conf).
 This requires updating only when any of the default values in the config needs to be changed.
 
 #### logback.xml
@@ -268,7 +268,7 @@ exec { session =>
   session
 }
 ```
-You can read more about the Exec function in the [Gatling documentation](https://gatling.io/docs/gatling/reference/3.4/general/scenario/#exec)
+You can read more about the Exec function in the [Gatling documentation](https://docs.gatling.io/concepts/scenario/#exec)
 
 The `exec` function returns a ChainBuilder. To use `exec` with performance-test-runner, convert the ChainBuilder to an ActionBuilder. 
 So, to display the contents of the Gatling session with performance-test-runner:
@@ -322,7 +322,7 @@ To use this feeder, chain the setup by passing the feeder to performance-test-ru
 setup("home-page", "Home Page") withActions(uuidFeeder.actionBuilders:_*) withRequests navigateToHomePage
 ```
 
-The value then can be extracted using Gatling's [Expression Language](https://gatling.io/docs/3.4/session/expression_el/). 
+The value then can be extracted using Gatling's [Expression Language](https://docs.gatling.io/concepts/session/el/). 
 
 ```
  def submitUniqueId = {
@@ -344,17 +344,17 @@ import scala.concurrent.duration._
 import io.gatling.core.Predef._  
 
 class HelloWorldSimulation extends PerformanceTestRunner {
+
+  val pauseTest = pause(6000 milliseconds).actionBuilders.last
   
-  val pause = new PauseBuilder(1 milliseconds, None)
-  
-  setup("login", "Login") withActions(navigateToLoginPage, pause, submitLogin)
+  setup("login", "Login") withActions(navigateToLoginPage, pauseTest, submitLogin)
 
   runSimulation()
 }
 ```
 
 #### Using Gatling's Session API
-Gatling's [Session API](https://gatling.io/docs/3.4/session/session_api/) is used to update Gatling's Session. To use
+Gatling's [Session API](https://docs.gatling.io/concepts/session/api/#session) is used to update Gatling's Session. To use
 the Session API with performance-test-runner, the `ChainBuilder` returned when executing a Session API should be 
 converted into an `ActionBuilder`. The `ActionBuilder` then can be chained to a `setup` using `withActions`.
 
@@ -375,7 +375,7 @@ setup("prep", "Prepare for test") withActions (setRandomTestId:_*)
 ```
 
 #### Repeat a request
-A request or requests can be repeated multiple times using Gatling's [repeat](https://gatling.io/docs/gatling/reference/3.4/general/scenario/#repeat) function.
+A request or requests can be repeated multiple times using Gatling's [repeat](https://docs.gatling.io/concepts/scenario/#repeat) function.
 This is useful when you want to repeat certain requests for a certain number of time. For example, adding 3 items during a journey.
 
 ```scala
@@ -390,7 +390,7 @@ setup("post-vat-return-period", "Post vat return period")  withRequests(addItem)
 ```
 
 #### Iterate asLongAs
-Use `asLongAs` to iterate [as long as](https://gatling.io/docs/gatling/reference/3.4/general/scenario/#aslongas) the 
+Use `asLongAs` to iterate [as long as](https://docs.gatling.io/concepts/scenario/#aslongas) the 
 `condition` is satisfied. `condition` is a session function that returns a boolean value. 
 
 For example, to repeat a request `asLongAs` the status of a page is **not** `200`
@@ -403,7 +403,7 @@ def getTurnoverPage: List[ActionBuilder] = {
   asLongAs(session => 
     !session.attributes.get("turnOverPageStatus").contains(200)) {
     exec(http("Get Turnover Page")
-      .get(s"$baseUrl$${turnOverPage}": String)
+      .get(s"$baseUrl#{turnOverPage}": String)
       .check(status.saveAs("turnOverPageStatus")))
   }.actionBuilders
 }
@@ -414,7 +414,7 @@ def getTurnoverPage: List[ActionBuilder] = {
 > See the [session API section](#using-gatlings-session-api) for updating Gatling's session. 
 
 
-Checkout Gatling's [Scenario documentation](https://gatling.io/docs/gatling/reference/3.4/general/scenario/) for all
+Checkout Gatling's [Scenario documentation](https://docs.gatling.io/concepts/scenario/) for all
 available functions.
 
 ### Conditionally run a setup step
